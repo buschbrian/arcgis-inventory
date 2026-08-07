@@ -136,6 +136,9 @@ def doctor() -> None:
     table.add_row("probe services", str(cfg.probe_services))
     console.print(table)
 
+    if Path(".env").is_file():
+        console.print("\n[dim]reading .env from the working directory[/]")
+
     if cfg.portal.is_anonymous:
         err_console.print(
             "[yellow]warning[/] no credentials configured. An anonymous crawl sees only public "

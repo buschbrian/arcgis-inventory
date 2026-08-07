@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from arcgis_inventory.config import load_config
@@ -70,3 +72,49 @@ def test_credentials_never_appear_in_a_repr() -> None:
     )
     rendered = f"{cfg.portal!r} {cfg!r}"
     assert "hunter2" not in rendered
+
+
+def test_a_dotenv_file_is_read(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """env.example tells people to copy it to .env, so .env has to work."""
+    monkeypatch.chdir(tmp_path)
+    for name in ("ARCGIS_PORTAL_URL", "ARCGIS_TOKEN", "ARCGIS_MAX_RPS"):
+        monkeypatch.delenv(name, raising=False)
+    Path(".env").write_text(
+        "# a comment\n"
+        f"export ARCGIS_PORTAL_URL='{PORTAL}'\n"
+        'ARCGIS_TOKEN="from-the-file"\n'
+        "ARCGIS_MAX_RPS=2\n"
+        "\n",
+        encoding="utf-8",
+    )
+    cfg = load_config()
+    assert cfg.portal.url == PORTAL
+    assert cfg.portal.token == "from-the-file"
+    assert cfg.max_rps == 2
+
+
+def test_the_real_environment_beats_the_dotenv_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A stale file silently overriding an export is how you crawl the wrong
+    portal while watching the right variable in your shell."""
+    monkeypatch.chdir(tmp_path)
+    Path(".env").write_text(
+        "ARCGIS_PORTAL_URL=https://stale.example.gov/portal\n", encoding="utf-8"
+    )
+    monkeypatch.setenv("ARCGIS_PORTAL_URL", PORTAL)
+    monkeypatch.setenv("ARCGIS_TOKEN", "t")
+    assert load_config().portal.url == PORTAL
+
+
+def test_a_dotenv_file_cannot_execute_anything(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """This file holds a password; it must not be a program."""
+    monkeypatch.chdir(tmp_path)
+    for name in ("ARCGIS_PORTAL_URL", "ARCGIS_TOKEN"):
+        monkeypatch.delenv(name, raising=False)
+    Path(".env").write_text(
+        f"ARCGIS_PORTAL_URL={PORTAL}\nARCGIS_TOKEN=$(whoami)\n", encoding="utf-8"
+    )
+    assert load_config().portal.token == "$(whoami)"

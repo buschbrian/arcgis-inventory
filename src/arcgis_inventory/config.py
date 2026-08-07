@@ -17,7 +17,7 @@ from typing import Any
 
 from .errors import ConfigError
 
-__all__ = ["PortalConfig", "RuntimeConfig", "load_config"]
+__all__ = ["PortalConfig", "RuntimeConfig", "load_config", "read_env_file"]
 
 ENV_PREFIX = "ARCGIS_"
 
@@ -68,13 +68,49 @@ class RuntimeConfig:
     extra: dict[str, Any] = field(default_factory=dict)
 
 
-def load_config(*, env: dict[str, str] | None = None) -> RuntimeConfig:
+def read_env_file(path: Path) -> dict[str, str]:
+    """Parse a ``.env`` file into a plain dict.
+
+    Deliberately minimal --- ``KEY=value``, ``#`` comments, optional surrounding
+    quotes, an optional leading ``export``. No interpolation and no shell
+    evaluation: this file holds a password, and a config format that can execute
+    anything is not what you want holding a password.
+    """
+    values: dict[str, str] = {}
+    for raw in path.read_text(encoding="utf-8").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip().removeprefix("export ").strip()
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+            value = value[1:-1]
+        if key:
+            values[key] = value
+    return values
+
+
+def load_config(
+    *, env: dict[str, str] | None = None, env_file: Path | None = None
+) -> RuntimeConfig:
     """Build a :class:`RuntimeConfig` from the environment.
+
+    A ``.env`` file in the working directory is read if present, but the real
+    environment always wins --- otherwise a stale file silently overrides what
+    someone just exported, and they end up crawling the wrong portal while
+    watching the right variable in their shell.
 
     Raises :class:`ConfigError` rather than guessing. A crawl pointed at the
     wrong portal is worse than a crawl that refuses to start.
     """
     source = dict(os.environ if env is None else env)
+
+    if env is None:
+        candidate = env_file or Path(".env")
+        if candidate.is_file():
+            from_file = read_env_file(candidate)
+            source = {**from_file, **source}
 
     url = _get(source, "PORTAL_URL")
     if not url:
