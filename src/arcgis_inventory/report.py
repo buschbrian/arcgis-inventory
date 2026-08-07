@@ -173,7 +173,7 @@ def _gaps(conn: sqlite3.Connection, portal_id: int, data: ReportData) -> list[st
     # crawl re-run, a report still citing the old failures is telling the reader
     # about a problem they already solved.
     errors = conn.execute(
-        "SELECT COUNT(*) AS n FROM crawl_error WHERE run_id = ("
+        "SELECT COUNT(*) AS n FROM crawl_error WHERE phase IN ('item', 'item_data') AND run_id = ("
         "  SELECT MAX(run_id) FROM run WHERE portal_id = ? AND mode = 'crawl')",
         (portal_id,),
     ).fetchone()["n"]
@@ -182,6 +182,24 @@ def _gaps(conn: sqlite3.Connection, portal_id: int, data: ReportData) -> list[st
             f"{errors} item(s) could not be fully read during the crawl. Their configuration "
             "was not analysed, so any conclusion about them is weaker than it looks. See the "
             "`crawl_error` table."
+        )
+
+    # Ownership is the gap most likely to be misread as good news. An anonymous
+    # or under-permissioned crawl cannot list users, so `owner_exists` is
+    # unknown for everything, `v_orphaned` returns nothing, and the report's
+    # "no current owner" section is empty --- which reads exactly like "there
+    # are no orphans" unless it says otherwise.
+    unknown_owner = conn.execute(
+        "SELECT COUNT(*) AS n FROM resource WHERE portal_id = ? AND kind = 'item' "
+        "AND owner_exists IS NULL",
+        (portal_id,),
+    ).fetchone()["n"]
+    if unknown_owner:
+        gaps.append(
+            f"Ownership could not be established for {unknown_owner} item(s) --- the portal's "
+            "user list was not readable by the account that crawled. No orphaned-owner findings "
+            "could be produced, and an empty 'no current owner' section above means the check "
+            "did not run, not that everything is owned."
         )
 
     # Never probed at all, versus probed and did not answer. The first is a gap

@@ -45,8 +45,11 @@ rules:
     target: unknown
     confidence: guess
     when:
-      signal: data_known
-      equals: false
+      all:
+        # Only when a configuration document was expected. A Hub Site has none
+        # by design, and calling that "unreadable" invents a problem.
+        - {signal: data_expected, equals: true}
+        - {signal: data_known, equals: false}
     because: >-
       its configuration could not be read during the crawl, so there is nothing
       to judge. Check permissions on the item and re-crawl before planning it.

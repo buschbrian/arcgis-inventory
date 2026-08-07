@@ -339,3 +339,32 @@ def test_without_the_dependency_graph_apps_look_simpler_than_they_are(
 def test_recommend_needs_a_crawl_first(conn: sqlite3.Connection) -> None:
     with pytest.raises(ValueError, match="no portal"):
         recommend_targets(conn)
+
+
+def test_a_type_with_no_configuration_by_design_is_not_called_unreadable(
+    graphed: sqlite3.Connection,
+) -> None:
+    """A Hub Site has no configuration document to fetch. Reporting that as
+    "could not be read" invents a problem and, because the honesty rule runs
+    first, stops the item ever reaching the rule that would say `keep`.
+
+    Found on a real portal, where all nine Hub Sites landed in `unknown`.
+    """
+    graphed.execute(
+        "UPDATE resource SET platform = 'hub_site', item_type = 'Hub Site Application', "
+        "raw_data_json = NULL WHERE item_id = 'a0000000000000000000000000000011'"
+    )
+    graphed.commit()
+
+    recommend_targets(graphed)
+    row = row_for(graphed, "Water Main Break Dashboard")
+    assert row["target"] == "keep"
+    assert "could not be read" not in row["reasoning"]
+
+
+def test_a_type_that_should_have_configuration_is_still_called_unreadable(
+    graphed: sqlite3.Connection,
+) -> None:
+    """The honesty rule still has to work for what it is actually for."""
+    recommend_targets(graphed)
+    assert row_for(graphed, "Bike Path Network")["target"] == "unknown"

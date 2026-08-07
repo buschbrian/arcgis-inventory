@@ -27,6 +27,7 @@ from typing import Any
 import yaml
 
 from . import __version__
+from .classify import is_data_bearing
 from .db import store
 from .extract import wab_widget_names
 from .scan import load_scan_rules
@@ -67,6 +68,10 @@ class Signals:
     title: str | None
     platform: str | None
     data_known: bool = False
+    # Whether a configuration document was ever going to exist. A Hub Site has
+    # none by design, and treating that as "unreadable" produces a verdict of
+    # `unknown` for an item there is nothing wrong with.
+    data_expected: bool = False
     num_views: int | None = None
     owner_exists: bool | None = None
     days_since_modified: int | None = None
@@ -84,6 +89,7 @@ class Signals:
     def as_dict(self) -> dict[str, Any]:
         return {
             "data_known": self.data_known,
+            "data_expected": self.data_expected,
             "num_views": self.num_views,
             "owner_exists": self.owner_exists,
             "days_since_modified": self.days_since_modified,
@@ -161,8 +167,9 @@ def recommend_targets(
     considered = 0
 
     for row in conn.execute(
-        "SELECT resource_id, item_id, title, platform, num_views, owner_exists, modified_at, "
-        "raw_data_json FROM resource WHERE portal_id = ? AND kind = 'item' ORDER BY resource_id",
+        "SELECT resource_id, item_id, title, platform, item_type, num_views, owner_exists, "
+        "modified_at, raw_data_json FROM resource "
+        "WHERE portal_id = ? AND kind = 'item' ORDER BY resource_id",
         (portal_id,),
     ):
         if row["platform"] not in platforms:
@@ -221,6 +228,7 @@ def _signals(conn: sqlite3.Connection, row: sqlite3.Row, stock_widgets: set[str]
         title=row["title"],
         platform=row["platform"],
         data_known=data is not None,
+        data_expected=is_data_bearing(row["item_type"]),
         num_views=row["num_views"],
         owner_exists=None if row["owner_exists"] is None else bool(row["owner_exists"]),
         days_since_modified=_age_days(row["modified_at"]),

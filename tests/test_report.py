@@ -289,3 +289,36 @@ def test_gaps_describe_the_latest_crawl_not_every_crawl_ever(
 
     after = " ".join(build_report(crawled).gaps)
     assert "could not be fully read" not in after
+
+
+def test_an_unreadable_user_list_is_not_reported_as_unreadable_items(
+    crawled: sqlite3.Connection,
+) -> None:
+    """The crawl records a `user` phase error when it cannot list users. That is
+    not an item, and counting it as one misstates the only number in the report
+    whose job is to be trustworthy."""
+    crawled.execute("DELETE FROM crawl_error WHERE phase IN ('item', 'item_data')")
+    crawled.execute(
+        "INSERT INTO crawl_error (run_id, phase, message, occurred_at) "
+        "VALUES ((SELECT MAX(run_id) FROM run), 'user', 'user list unreadable', 'now')"
+    )
+    crawled.commit()
+
+    gaps = " ".join(build_report(crawled).gaps)
+    assert "could not be fully read" not in gaps
+
+
+def test_unknown_ownership_is_stated_rather_than_read_as_no_orphans(
+    crawled: sqlite3.Connection,
+) -> None:
+    """An anonymous crawl cannot list users, so the orphan check never runs and
+    the report's 'no current owner' section is empty --- which reads exactly
+    like good news."""
+    crawled.execute("UPDATE resource SET owner_exists = NULL WHERE kind = 'item'")
+    crawled.commit()
+
+    data = build_report(crawled)
+    assert data.orphans == []
+    gaps = " ".join(data.gaps)
+    assert "Ownership could not be established" in gaps
+    assert "did not run, not that everything is owned" in gaps
