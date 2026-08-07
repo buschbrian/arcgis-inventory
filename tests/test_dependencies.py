@@ -95,13 +95,14 @@ def test_the_graph_matches_the_fixtures_declared_edge_list(graphed) -> None:
         + f"\nextra {len(extra)}:\n"
         + "\n".join(f"  {e}" for e in extra[:10])
     )
-    assert result.edge_count == len(want) == 64
+    assert result.edge_count == len(want) == 71
 
 
 def test_every_relation_the_fixture_exercises_is_produced(graphed) -> None:
     _, result = graphed
     assert result.relations == {
         "operational_layer": 44,
+        "geometry_service": 7,
         "data_source": 12,
         "basemap": 2,
         "geocoder": 2,
@@ -318,10 +319,10 @@ def test_rebuilding_is_idempotent(conn: sqlite3.Connection) -> None:
 
     assert second.edge_count == first.edge_count
     assert actual_edges(conn) == before
-    assert conn.execute("SELECT COUNT(*) AS n FROM edge").fetchone()["n"] == 64
+    assert conn.execute("SELECT COUNT(*) AS n FROM edge").fetchone()["n"] == 71
     assert (
         conn.execute("SELECT COUNT(*) AS n FROM resource WHERE kind = 'endpoint'").fetchone()["n"]
-        == 22
+        == 23
     )
 
 

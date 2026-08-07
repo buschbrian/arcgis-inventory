@@ -88,7 +88,7 @@ def test_dependencies_builds_the_graph_after_a_crawl(
 
     result = runner.invoke(app, ["dependencies", "--db", str(db)])
     assert result.exit_code == 0, result.output
-    assert "64 dependencies" in result.output
+    assert "71 dependencies" in result.output
     assert "operational_layer" in result.output
 
 

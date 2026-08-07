@@ -231,6 +231,14 @@ services:
     access: public
     exercises: "29 - print service. `print_service` relation."
 
+  # Every Web AppBuilder app on the live portal sampled declared one of these,
+  # under a top-level `geometryService` key the fixture originally did not have.
+  - key: svc_geometry
+    path: Utilities/Geometry/GeometryServer
+    type: GeometryServer
+    access: public
+    exercises: "Utility geometry service, referenced by every WAB app. Learned from a real portal; the extractor finds it by sweeping for service URLs rather than by knowing the key name."
+
   # Case 20: a basemap from outside the org entirely.
   - key: svc_external_basemap
     host: basemaps.external-vendor.example.com

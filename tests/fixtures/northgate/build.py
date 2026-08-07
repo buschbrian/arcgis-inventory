@@ -457,6 +457,12 @@ def build_wab(org: Org, item: dict[str, Any]) -> tuple[dict[str, Any], list[Edge
         "wabVersion": "2.29",
         "title": item["title"],
         "portalUrl": org.org["portal_url"],
+        # Every Web AppBuilder app observed on a live portal declared one of
+        # these, and none used the top-level `geocoder` / `printTask` /
+        # `gpServices` keys this fixture originally invented. Both shapes are
+        # kept: the extractor sweeps for service URLs rather than matching key
+        # names, so it must handle whatever a real config puts them under.
+        "geometryService": org.service_url("svc_geometry"),
         "theme": {"name": "FoldableTheme", "styles": ["default"], "version": "2.29"},
         "map": {
             "3D": False,
@@ -478,6 +484,8 @@ def build_wab(org: Org, item: dict[str, Any]) -> tuple[dict[str, Any], list[Edge
         }
         # Regenerate the widget-config path against the grouped shape.
         edges = [e for e in edges if e[1] != "widget_config"]
+
+    edges.append((org.service_url("svc_geometry"), "geometry_service", "/geometryService", None))
 
     if key := data.get("geocoder"):
         url = org.service_url(key)

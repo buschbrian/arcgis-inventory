@@ -62,10 +62,10 @@ def findings(conn: sqlite3.Connection, rule_id: str) -> list[sqlite3.Row]:
 
 def test_probing_distinguishes_public_from_restricted(graphed: sqlite3.Connection) -> None:
     result = probe(graphed)
-    assert result.probed == 22
+    assert result.probed == 23
     assert result.restricted == 6
     assert result.unreachable == 1  # the service that is simply gone
-    assert result.public == 15
+    assert result.public == 16
 
 
 def test_the_dead_service_is_recorded_unreachable_not_private(
@@ -103,7 +103,7 @@ def test_without_probing_the_exposure_rule_says_nothing(graphed: sqlite3.Connect
     that trains people to ignore the rule."""
     result = audit_sharing(graphed)
     assert "public-app-private-dep" not in result.findings
-    assert result.unprobed_endpoints == 22
+    assert result.unprobed_endpoints == 23
 
 
 def test_a_public_app_reaching_a_private_layer_through_a_web_map_is_found(

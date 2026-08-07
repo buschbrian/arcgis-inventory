@@ -33,13 +33,44 @@ _JS_3X = re.compile(r"js\.arcgis\.com/3\.", re.IGNORECASE)
 DATA_BEARING_TYPES = frozenset(
     {
         "Dashboard",
-        "Form",
         "StoryMap",
         "Web Experience",
         "Web Map",
         "Web Mapping Application",
         "Web Scene",
         "Notebook",
+    }
+)
+
+# Deliberately NOT data-bearing, learned from a real portal: a Survey123 `Form`
+# item's /data redirects to a .zip package. Requesting it produced one failed
+# fetch per form --- 34 of them on the first real crawl --- and turned an
+# otherwise clean run `partial` for no reason. `Form` classifies from its item
+# type alone, so nothing is lost by not asking.
+
+# Uploaded files and data artifacts. Not applications and not migrated, but
+# recognized on purpose: `other` should mean "this tool does not know what this
+# is", and a bucket that quietly contains every PDF in the org cannot carry
+# that meaning.
+_FILE_TYPES = frozenset(
+    {
+        "CSV",
+        "Code Sample",
+        "File Geodatabase",
+        "GeoJson",
+        "Image",
+        "KML",
+        "KML Collection",
+        "Layer Package",
+        "Map Package",
+        "Microsoft Excel",
+        "Microsoft Powerpoint",
+        "Microsoft Word",
+        "PDF",
+        "Service Definition",
+        "Shapefile",
+        "Tile Package",
+        "Vector Tile Package",
     }
 )
 
@@ -51,6 +82,10 @@ _SIMPLE_TYPES = {
     "Form": "form",
     "Notebook": "notebook",
     "Hub Site Application": "hub_site",
+    # A Hub Page belongs to a Hub site rather than standing alone, but it is
+    # Hub content either way and does not belong in the unknown bucket.
+    "Hub Page": "hub_site",
+    "Hub Initiative": "hub_site",
     "Feature Service": "feature_service",
     "Map Service": "map_service",
     "Image Service": "image_service",
@@ -85,6 +120,9 @@ def classify(
 
     if simple := _SIMPLE_TYPES.get(item_type or ""):
         return Classification(simple, "certain", {"item_type": item_type})
+
+    if item_type in _FILE_TYPES:
+        return Classification("file", "certain", {"item_type": item_type})
 
     if item_type == "Code Attachment":
         platform = "widget_package" if "Widget" in keywords else "other"

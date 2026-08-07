@@ -286,3 +286,22 @@ def test_scan_records_the_rules_version_so_changes_are_attributable(
 def test_scan_needs_a_crawl_first(conn: sqlite3.Connection) -> None:
     with pytest.raises(ValueError, match="no portal"):
         scan_inventory(conn)
+
+
+def test_stock_widget_names_are_folder_names_not_display_names() -> None:
+    """A space in this list is a bug with a budget attached.
+
+    The names are matched against `widgets/<Name>/Widget` URIs, which never
+    contain spaces. Guessing at display names once flagged 20 of 22 apps on a
+    real portal as needing custom development, on the strength of stock widgets
+    the list had merely misspelled.
+    """
+    stock = load_scan_rules()["stock_wab_widgets"]
+    with_spaces = [name for name in stock if " " in name]
+    assert not with_spaces, f"these can never match a widget URI: {with_spaces}"
+
+
+@pytest.mark.parametrize("name", ["ExtentNavigate", "AddData", "SmartEditor", "TimeSlider"])
+def test_widgets_seen_on_a_real_portal_are_recognized_as_stock(name: str) -> None:
+    """Every one of these was wrongly flagged as custom on the first real run."""
+    assert name in load_scan_rules()["stock_wab_widgets"]

@@ -63,6 +63,15 @@
     "reachable": true
   },
   {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "key": "svc_geometry",
+    "service_type": "GeometryServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
     "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer_OLD/MapServer",
     "key": "svc_gone",
     "service_type": "MapServer",

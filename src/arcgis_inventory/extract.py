@@ -129,70 +129,81 @@ def _layer_urls(layers: Any, path: str, relation: str) -> Iterator[ExtractedEdge
 # ---------------------------------------------------------------------------
 
 
+# Path fragments that identify what a service reference is for. Matched against
+# the whole JSON pointer, not just the key, so `/geocoder/url` and
+# `/widgets/3/config/geocoderUrl` both resolve correctly.
+#
+# Ordered: the first match wins, so the specific beats the generic.
+_RELATION_BY_PATH = (
+    ("geocod", "geocoder"),
+    ("locator", "geocoder"),
+    ("print", "print_service"),
+    ("geometry", "geometry_service"),
+    ("route", "route_service"),
+    ("gpservice", "gp_service"),
+    ("elevation", "elevation_service"),
+)
+
+# Relations that name a service as a whole rather than a layer within it, and
+# therefore get trimmed back to the service root.
+_SERVICE_LEVEL = frozenset(
+    {"geocoder", "print_service", "geometry_service", "route_service", "gp_service"}
+)
+
+
 def _web_appbuilder(data: dict[str, Any]) -> Iterator[ExtractedEdge]:
+    """Web AppBuilder configuration has no schema worth relying on.
+
+    Every widget invents its own key for a service URL --- real apps use
+    ``geometryService``, ``baseURL``, ``printTaskURL``, ``routeService``,
+    ``drsUrl``, ``sourceUrl``, and more. Enumerating those key names is a losing
+    game: the list is unbounded and silently incomplete, and the failure mode is
+    an app that looks like it depends on nothing.
+
+    So instead of asking "what are the keys I know about", this asks "where does
+    this document mention a REST service", and records the JSON pointer to each
+    one. The pointer is what makes the answer auditable, and an unknown widget
+    is handled the same as a known one.
+    """
     web_map = data.get("map")
     if isinstance(web_map, dict) and isinstance(web_map.get("itemId"), str):
         yield ExtractedEdge("data_source", "/map/itemId", item_id=web_map["itemId"])
 
-    pool = data.get("widgetPool")
-    if isinstance(pool, dict):
-        yield from _widgets(pool.get("widgets"), "/widgetPool/widgets")
-        groups = pool.get("groups")
-        if isinstance(groups, list):
-            for g, group in enumerate(groups):
-                if isinstance(group, dict):
-                    yield from _widgets(group.get("widgets"), f"/widgetPool/groups/{g}/widgets")
-
-    if isinstance(data.get("widgetOnScreen"), dict):
-        yield from _widgets(data["widgetOnScreen"].get("widgets"), "/widgetOnScreen/widgets")
-
-    geocoder = data.get("geocoder")
-    if isinstance(geocoder, dict) and (
-        edge := _url_edge(geocoder.get("url"), "/geocoder/url", "geocoder", trim=True)
-    ):
-        yield edge
-
-    print_task = data.get("printTask")
-    if isinstance(print_task, dict) and (
-        edge := _url_edge(print_task.get("url"), "/printTask/url", "print_service", trim=True)
-    ):
-        yield edge
-
-    gp_services = data.get("gpServices")
-    if isinstance(gp_services, list):
-        for i, service in enumerate(gp_services):
-            if isinstance(service, dict) and (
-                edge := _url_edge(
-                    service.get("url"), f"/gpServices/{i}/url", "gp_service", trim=True
-                )
-            ):
-                yield edge
+    yield from _sweep_service_urls(data)
 
 
-def _widgets(widgets: Any, path: str) -> Iterator[ExtractedEdge]:
-    """Widget configuration is where the surprises live.
+def _sweep_service_urls(node: Any, path: str = "") -> Iterator[ExtractedEdge]:
+    """Walk a config document, yielding an edge for every REST service URL.
 
-    A search widget can point at a layer the app's web map never mentions ---
-    frequently a dev or staging service somebody wired in during testing.
+    Only strings containing ``/rest/services/`` count. That keeps portal URLs,
+    logo links, and documentation links out of the dependency graph, which is
+    the difference between a graph and a pile of every URL in the config.
     """
-    if not isinstance(widgets, list):
+    if isinstance(node, str):
+        if "/rest/services/" not in node.lower():
+            return
+        relation = _relation_for(path)
+        edge = _url_edge(node, path, relation, trim=relation in _SERVICE_LEVEL)
+        if edge is not None:
+            yield edge
         return
-    for i, widget in enumerate(widgets):
-        if not isinstance(widget, dict):
-            continue
-        config = widget.get("config")
-        if not isinstance(config, dict):
-            continue
-        sources = config.get("sources")
-        if not isinstance(sources, list):
-            continue
-        for j, source in enumerate(sources):
-            if not isinstance(source, dict):
-                continue
-            if edge := _url_edge(
-                source.get("url"), f"{path}/{i}/config/sources/{j}/url", "widget_config"
-            ):
-                yield edge
+
+    if isinstance(node, dict):
+        for key, value in node.items():
+            yield from _sweep_service_urls(value, f"{path}/{key}")
+    elif isinstance(node, list):
+        for index, value in enumerate(node):
+            yield from _sweep_service_urls(value, f"{path}/{index}")
+
+
+def _relation_for(path: str) -> str:
+    lowered = path.lower()
+    for fragment, relation in _RELATION_BY_PATH:
+        if fragment in lowered:
+            return relation
+    # Inside a widget it is widget configuration; elsewhere it is the app
+    # pointing at something directly.
+    return "widget_config" if "widget" in lowered else "data_source"
 
 
 def wab_widget_names(data: Any) -> list[str]:

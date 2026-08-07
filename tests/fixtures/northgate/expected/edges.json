@@ -7,6 +7,13 @@
     "layer_index": null
   },
   {
+    "from_item_id": "a0000000000000000000000000000001",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
+    "layer_index": null
+  },
+  {
     "from_item_id": "a0000000000000000000000000000002",
     "to_item_id": "a0000000000000000000000000000019",
     "relation": "data_source",
@@ -18,6 +25,13 @@
     "to_url": "https://geocode.regional-gis.example.org/server/rest/services/Composite/NorthgateLocator/GeocodeServer",
     "relation": "geocoder",
     "source_path": "/geocoder/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000002",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
     "layer_index": null
   },
   {
@@ -36,6 +50,13 @@
   },
   {
     "from_item_id": "a0000000000000000000000000000003",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000003",
     "to_url": "https://services.northgate.example.gov/server/rest/services/Tools/PlowRouteOptimizer/GPServer",
     "relation": "gp_service",
     "source_path": "/gpServices/0/url",
@@ -49,6 +70,13 @@
     "layer_index": null
   },
   {
+    "from_item_id": "a0000000000000000000000000000004",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
+    "layer_index": null
+  },
+  {
     "from_item_id": "a0000000000000000000000000000005",
     "to_item_id": "a0000000000000000000000000000028",
     "relation": "data_source",
@@ -56,10 +84,24 @@
     "layer_index": null
   },
   {
+    "from_item_id": "a0000000000000000000000000000005",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
+    "layer_index": null
+  },
+  {
     "from_item_id": "a0000000000000000000000000000006",
     "to_item_id": "a0000000000000000000000000000019",
     "relation": "data_source",
     "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000006",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
     "layer_index": null
   },
   {
@@ -74,6 +116,13 @@
     "to_item_id": "a0000000000000000000000000000027",
     "relation": "data_source",
     "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000007",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
+    "relation": "geometry_service",
+    "source_path": "/geometryService",
     "layer_index": null
   },
   {

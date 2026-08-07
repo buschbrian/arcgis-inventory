@@ -41,6 +41,9 @@ PLATFORMS: Final[tuple[str, ...]] = (
     "widget_package",
     "form",
     "notebook",
+    # An uploaded file or data artifact: a PDF, a shapefile, a geodatabase.
+    # Recognized separately so that `other` keeps meaning "unrecognized".
+    "file",
     "other",
 )
 
@@ -58,6 +61,11 @@ RELATIONS: Final[tuple[str, ...]] = (
     "gp_service",
     "print_service",
     "elevation_service",
+    # Utility services that real Web AppBuilder apps reference by their own key
+    # names. Every WAB app observed on a live portal declared a geometry
+    # service; none used the top-level keys the fixture originally invented.
+    "geometry_service",
+    "route_service",
     "widget_config",
     "arcade_source",
     "attachment_source",

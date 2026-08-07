@@ -17,32 +17,44 @@
 #   modified_older_than_days      -- integer
 # Combinators: all / any / none, each taking a list of matchers.
 
-# Widgets shipped with Web AppBuilder. Anything outside this list is custom
-# code, which is the difference between reconfiguring an app and rewriting it.
+# Widgets shipped with Web AppBuilder. Anything outside this list is treated as
+# custom, which is the difference between reconfiguring an app and rewriting it.
+#
+# These are the widget *folder* names as they appear in a `widgets/<Name>/Widget`
+# URI, and they contain no spaces. An earlier version of this list guessed at
+# display names --- "Extent Navigate", "Smart Editor" --- and consequently
+# flagged 20 of 22 apps on a real portal as needing custom development, on the
+# strength of stock widgets it had merely misspelled. A false positive here is
+# expensive: it turns a reconfiguration into a budgeted rewrite.
 stock_wab_widgets:
+  - About
+  - AddData
+  - Analysis
   - AttributeTable
   - BasemapGallery
   - Bookmark
   - Chart
   - Coordinate
   - DirectionalPad
-  - Draw
   - Directions
+  - Draw
   - Edit
-  - Extent Navigate
+  - ExtentNavigate
   - Filter
   - FullScreen
   - Geolookup
   - Geoprocessing
   - GeoSearch
-  - Grid
+  - GroupFilter
   - HomeButton
+  - IncidentAnalysis
   - InfoSummary
   - LayerList
   - Legend
   - Measurement
   - MyLocation
   - NearMe
+  - Overview
   - OverviewMap
   - Print
   - Query
@@ -52,13 +64,13 @@ stock_wab_widgets:
   - Search
   - Select
   - Share
-  - Situation Awareness
-  - Smart Editor
+  - SituationAwareness
+  - SmartEditor
   - Splash
   - Stream
   - Summary
   - Swipe
-  - Time Slider
+  - TimeSlider
   - ZoomSlider
 
 rules:

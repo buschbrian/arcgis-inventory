@@ -3,6 +3,7 @@
   "wabVersion": "2.29",
   "title": "Utility Locate Request Viewer",
   "portalUrl": "https://northgate.example.gov/portal",
+  "geometryService": "https://services.northgate.example.gov/server/rest/services/Utilities/Geometry/GeometryServer",
   "theme": {
     "name": "FoldableTheme",
     "styles": [
