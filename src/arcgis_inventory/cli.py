@@ -23,6 +23,7 @@ from .db import SCHEMA_VERSION, open_database
 from .dependencies import build_dependencies
 from .errors import ArcgisInventoryError, ConfigError
 from .reprocess import reprocess_inventory
+from .scan import load_scan_rules, scan_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
 
 console = Console()
@@ -56,7 +57,7 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, audit-sharing."
+    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, audit-sharing, scan."
 )
 
 
@@ -321,9 +322,54 @@ def dependencies(db: DbOption = None) -> None:
 
 
 @app.command()
-def scan(db: DbOption = None) -> None:
-    """Apply YAML deprecated-tech rules (JS 3.x, dojo/dijit, HTTP, Map Viewer Classic)."""
-    raise NotImplementedError(_ROADMAP)
+def scan(
+    db: DbOption = None,
+    rules: Annotated[
+        Path | None, typer.Option("--rules", help="Directory containing your own scan.yaml.")
+    ] = None,
+    severity: Annotated[
+        str | None,
+        typer.Option("--severity", help="Only list findings at or above this severity."),
+    ] = None,
+) -> None:
+    """Apply YAML deprecated-tech rules (WAB, JS 3.x, dojo/dijit, Map Viewer Classic).
+
+    Reads stored documents only; no network. Rules are data --- point --rules at
+    your own scan.yaml to replace them.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first.")
+        return
+
+    conn = open_database(target)
+    try:
+        result = scan_inventory(conn, rules=load_scan_rules(rules))
+        rows = conn.execute(
+            "SELECT f.rule_id, f.severity, COUNT(*) AS n FROM finding f "
+            "WHERE f.resolved_run IS NULL AND f.status = 'open' "
+            "GROUP BY f.rule_id, f.severity"
+        ).fetchall()
+    except (ValueError, TypeError) as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    order = ["critical", "high", "medium", "low", "info"]
+    cutoff = order.index(severity) if severity in order else len(order) - 1
+    shown = [r for r in rows if r["severity"] in order[: cutoff + 1]]
+
+    if shown:
+        table = Table("severity", "rule", "items", box=None, pad_edge=False)
+        for row in sorted(shown, key=lambda r: (order.index(r["severity"]), r["rule_id"])):
+            table.add_row(row["severity"], row["rule_id"], str(row["n"]))
+        console.print(table)
+
+    console.print(
+        f"run {result.run_id}: [bold]{result.total}[/] findings across {result.scanned} items "
+        f"({result.new} new, {result.resolved} resolved since the last scan)"
+    )
 
 
 @app.command("audit-sharing")

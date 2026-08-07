@@ -17,8 +17,8 @@ before anything is pointed at a real portal.
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
 - **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, `reprocess`,
-  `dependencies`, and `audit-sharing` work; every other subcommand raises
-  rather than quietly succeeding.
+  `dependencies`, `audit-sharing`, and `scan` work; every other subcommand
+  raises rather than quietly succeeding.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -45,16 +45,18 @@ before anything is pointed at a real portal.
   re-run and a rule that stops firing sets `resolved_run` rather than deleting
   the row. `--probe` is opt-in; without it the exposure rule stays silent.
 
+- **`scan`** — `scan.py` + `rules/scan.yaml`. Deprecated-tech detection driven
+  by a small matcher vocabulary with `all`/`any`/`none` combinators. Rules are
+  data and are replaced wholesale via `--rules`. An unknown matcher name raises
+  rather than silently passing.
+
 ## Next
 
-1. **`scan`** — YAML rule format, deprecated-tech detection. Note that the two
-   items whose data could not be read have no dependencies recorded; the rules
-   must treat that as missing knowledge, not as a simple app.
-2. **`recommend`** — rule-based target with generated reasoning. Bias toward
+1. **`recommend`** — rule-based target with generated reasoning. Bias toward
    Instant Apps for simple single-map apps rather than defaulting to Experience
    Builder.
-3. **`report`** — Markdown + HTML, generated from the fixture for the README.
-4. **`wab-export`** — dump WAB widget/theme/search config as migration
+2. **`report`** — Markdown + HTML, generated from the fixture for the README.
+3. **`wab-export`** — dump WAB widget/theme/search config as migration
    documentation.
 
 ## Known gaps
@@ -66,6 +68,10 @@ before anything is pointed at a real portal.
 - **Probe results are a point in time** and are stored on the endpoint rather
   than per run, so there is no history of when a service changed sharing.
 - **Mermaid and Graphviz export** of the graph is not built yet.
+- **`scan` reads item documents only.** The two fixture items whose data could
+  not be read therefore match almost nothing — that is missing knowledge, not a
+  clean bill, and `recommend` has to treat low-signal items as unknown rather
+  than as simple.
 
 ## Explicitly out of scope
 

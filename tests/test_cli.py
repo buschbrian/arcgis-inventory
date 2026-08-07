@@ -149,9 +149,35 @@ def test_audit_sharing_with_probe_finds_public_exposure(
     assert "restricted" in result.output
 
 
+def test_scan_reports_deprecated_technology(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["scan", "--db", str(db)])
+    assert result.exit_code == 0, result.output
+    assert "web-appbuilder-retiring" in result.output
+    assert "critical" in result.output
+
+
+def test_scan_can_filter_by_severity(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["scan", "--db", str(db), "--severity", "critical"])
+    assert result.exit_code == 0, result.output
+    assert "web-appbuilder-retiring" in result.output
+    assert "unused-and-stale" not in result.output  # low severity, filtered out
+
+
 @pytest.mark.parametrize(
     "command",
-    ["scan", "recommend", "report"],
+    ["recommend", "report"],
 )
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""

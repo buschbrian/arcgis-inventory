@@ -1,0 +1,193 @@
+# Deprecated-technology rules.
+#
+# Replace this file wholesale by pointing `--rules` at a directory containing
+# your own `scan.yaml`. Rule ids are the stable identity behind every finding's
+# fingerprint, so keep them if you edit severities or wording --- changing an id
+# orphans whatever triage decisions people have already recorded against it.
+#
+# Matchers available inside `when`:
+#   platform / item_type          -- list; any match
+#   type_keyword                  -- list; any of the item's typeKeywords
+#   missing_type_keyword          -- list; none of them present
+#   data_matches                  -- regex against the item's data document
+#   data_has_key                  -- top-level key present in the data document
+#   url_matches                   -- regex against the item's own url
+#   custom_wab_widget             -- a widget URI outside `stock_wab_widgets`
+#   views_below                   -- integer; NULL views never match
+#   modified_older_than_days      -- integer
+# Combinators: all / any / none, each taking a list of matchers.
+
+# Widgets shipped with Web AppBuilder. Anything outside this list is custom
+# code, which is the difference between reconfiguring an app and rewriting it.
+stock_wab_widgets:
+  - AttributeTable
+  - BasemapGallery
+  - Bookmark
+  - Chart
+  - Coordinate
+  - DirectionalPad
+  - Draw
+  - Directions
+  - Edit
+  - Extent Navigate
+  - Filter
+  - FullScreen
+  - Geolookup
+  - Geoprocessing
+  - GeoSearch
+  - Grid
+  - HomeButton
+  - InfoSummary
+  - LayerList
+  - Legend
+  - Measurement
+  - MyLocation
+  - NearMe
+  - OverviewMap
+  - Print
+  - Query
+  - RelatedTable
+  - Scalebar
+  - Screening
+  - Search
+  - Select
+  - Share
+  - Situation Awareness
+  - Smart Editor
+  - Splash
+  - Stream
+  - Summary
+  - Swipe
+  - Time Slider
+  - ZoomSlider
+
+rules:
+  # ---------------------------------------------------------------------------
+  # The deadline that drives everything else.
+  # ---------------------------------------------------------------------------
+  - id: web-appbuilder-retiring
+    category: deprecated_tech
+    severity: critical
+    title: Web AppBuilder application
+    detail: >-
+      Web AppBuilder apps in ArcGIS Online stop being editable in Q4 2026 and
+      stop working in Q2 2027. Q4 2026 is the date that matters: after it you
+      can still run this app but you cannot change it, which means you cannot
+      fix it either.
+    suggested_action: >-
+      Rebuild. There is no converter, from Esri or anyone else. Simple
+      single-map apps usually belong in an Instant App rather than Experience
+      Builder --- see the `recommend` subcommand.
+    when:
+      platform: [web_appbuilder]
+
+  # ---------------------------------------------------------------------------
+  # Already retired, not merely deprecated.
+  # ---------------------------------------------------------------------------
+  - id: arcgis-js-3
+    category: deprecated_tech
+    severity: critical
+    title: Built on the retired ArcGIS API for JavaScript 3.x
+    detail: >-
+      The ArcGIS API for JavaScript 3.x retired in July 2024. This is also the
+      actual reason Web AppBuilder is going away --- WAB was built on 3.x. Code
+      on 3.x receives no fixes, including security fixes.
+    suggested_action: Rebuild on the 4.x SDK, or replace with a configurable app.
+    when:
+      any:
+        - data_matches: 'js\.arcgis\.com/3\.'
+        - data_has_key: dojoConfig
+
+  - id: dojo-dijit
+    category: deprecated_tech
+    severity: high
+    title: Depends on Dojo or Dijit
+    detail: >-
+      Dojo was the widget toolkit behind the 3.x API and is not used by anything
+      current. Its presence means a rewrite rather than an upgrade.
+    suggested_action: Rebuild without Dojo; the 4.x SDK does not use it.
+    when:
+      data_matches: '(dijit|dojo/|dojoConfig|dgrid)'
+
+  - id: flex-or-silverlight-viewer
+    category: deprecated_tech
+    severity: critical
+    title: Flex or Silverlight viewer
+    detail: >-
+      Both runtimes were removed from every browser years ago. An app of this
+      type cannot run for anyone today.
+    suggested_action: Retire the item, or rebuild from scratch if it is still needed.
+    when:
+      type_keyword: [Flex, Silverlight, "Flex Viewer", "Silverlight Viewer"]
+
+  # ---------------------------------------------------------------------------
+  # Migration effort signals.
+  # ---------------------------------------------------------------------------
+  - id: wab-custom-widget
+    category: deprecated_tech
+    severity: high
+    title: Web AppBuilder app with a custom widget
+    detail: >-
+      Custom widget code does not carry across to Experience Builder. This app
+      is a rewrite, not a reconfiguration, and the widget's behaviour has to be
+      rebuilt or dropped deliberately.
+    suggested_action: >-
+      Decide early whether the custom behaviour is still required. It is
+      frequently cheaper to drop it than to reimplement it.
+    when:
+      all:
+        - platform: [web_appbuilder]
+        - custom_wab_widget: true
+
+  - id: wab-3d
+    category: deprecated_tech
+    severity: high
+    title: Web AppBuilder 3D application
+    detail: >-
+      The 3D flavour of Web AppBuilder has the narrowest replacement path of
+      any WAB app; Experience Builder's 3D support differs substantially.
+    suggested_action: Prototype the replacement before committing to a date.
+    when:
+      type_keyword: [WAB3D]
+
+  - id: map-viewer-classic
+    category: deprecated_tech
+    severity: medium
+    title: Web map last authored in Map Viewer Classic
+    detail: >-
+      Map Viewer Classic is retired. Popups, symbology, and Arcade written there
+      may render differently in the current Map Viewer, so this map should be
+      opened and checked before anything is rebuilt on top of it.
+    suggested_action: Open in the current Map Viewer, verify, and re-save.
+    when:
+      all:
+        - platform: [web_map]
+        - data_matches: '"authoringApp"\s*:\s*"(WebMapViewer|ArcGISMapViewerClassic)"'
+
+  - id: operations-dashboard-classic
+    category: deprecated_tech
+    severity: medium
+    title: Classic Operations Dashboard
+    detail: The classic Operations Dashboard has been superseded by ArcGIS Dashboards.
+    suggested_action: Recreate in ArcGIS Dashboards.
+    when:
+      all:
+        - type_keyword: ["Operations Dashboard"]
+        - missing_type_keyword: ["ArcGIS Dashboards"]
+
+  # ---------------------------------------------------------------------------
+  # Hygiene. Not deprecated technology, but it changes what you do about it.
+  # ---------------------------------------------------------------------------
+  - id: unused-and-stale
+    category: hygiene
+    severity: low
+    title: No recorded views and untouched for years
+    detail: >-
+      Nothing has viewed this and nobody has edited it in a long time. The
+      cheapest migration is the one you do not do --- confirm it is dead and
+      retire it rather than rebuilding it.
+    suggested_action: Confirm with the owning group, then archive or delete.
+    when:
+      all:
+        - views_below: 1
+        - modified_older_than_days: 730

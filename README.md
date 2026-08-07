@@ -30,7 +30,7 @@ organization's portal four times to answer four questions about the same items.
 ```
 arcgis-inventory inventory      # crawl + classify                      [works]
 arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
-arcgis-inventory scan           # deprecated tech (JS 3.x, dojo, http://)
+arcgis-inventory scan           # deprecated tech (WAB, JS 3.x, dojo)   [works]
 arcgis-inventory audit-sharing  # public apps on private layers         [works]
 arcgis-inventory recommend      # retire / instant app / experience builder / custom
 arcgis-inventory report         # Markdown + HTML rollup
@@ -219,6 +219,45 @@ The dev/staging hostname patterns live in
 [`rules/sharing.yaml`](src/arcgis_inventory/rules/sharing.yaml) and are replaced
 wholesale by pointing `--rules` at your own copy. No organization's naming
 convention is baked into this repository.
+
+### Scan for deprecated technology
+
+```bash
+arcgis-inventory scan --db /tmp/demo.sqlite
+```
+
+```
+severity  rule                     items
+critical  arcgis-js-3              1
+critical  web-appbuilder-retiring  9
+high      dojo-dijit               1
+high      wab-custom-widget        1
+low       unused-and-stale         1
+run 3: 13 findings across 30 items (13 new, 0 resolved since the last scan)
+```
+
+```
+[high] Web AppBuilder app with a custom widget
+  Snow Plow Route Status: Custom widget code does not carry across to
+  Experience Builder. This app is a rewrite, not a reconfiguration, and the
+  widget's behaviour has to be rebuilt or dropped deliberately.
+  -> Decide early whether the custom behaviour is still required. It is
+     frequently cheaper to drop it than to reimplement it.
+```
+
+Rules are **data**, in [`rules/scan.yaml`](src/arcgis_inventory/rules/scan.yaml),
+with a small matcher vocabulary (`platform`, `type_keyword`, `data_matches`,
+`data_has_key`, `custom_wab_widget`, `views_below`, …) and `all` / `any` / `none`
+combinators. A scanner nobody can extend gets replaced by a spreadsheet within a
+month, so `--rules` swaps the file wholesale.
+
+Two behaviours worth knowing:
+
+- A **typo in a matcher name is an error**, not a silent pass. A rule that
+  quietly matches nothing is worse than no scanner.
+- `views_below` **never matches an unknown view count.** NULL means "we don't
+  know", and retiring an app on the strength of a missing number is how you
+  delete something people depend on.
 
 ## Handle the output carefully
 
