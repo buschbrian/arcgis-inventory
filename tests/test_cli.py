@@ -50,9 +50,31 @@ def test_doctor_fails_loudly_without_a_portal(monkeypatch: pytest.MonkeyPatch) -
     assert result.exit_code == 2
 
 
+def test_inventory_crawls_a_fixture_without_network_or_credentials(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+
+    result = runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+    assert result.exit_code == 0, result.output
+    assert "30 items" in result.output
+    assert "web_appbuilder" in result.output
+    assert db.exists()
+
+
+def test_inventory_without_a_portal_fails_rather_than_crawling_nothing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    result = runner.invoke(app, ["inventory", "--db", str(tmp_path / "x.sqlite")])
+    assert result.exit_code == 2
+
+
 @pytest.mark.parametrize(
     "command",
-    ["inventory", "dependencies", "scan", "audit-sharing", "recommend", "report", "reprocess"],
+    ["dependencies", "scan", "audit-sharing", "recommend", "report", "reprocess"],
 )
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""

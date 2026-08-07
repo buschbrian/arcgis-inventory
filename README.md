@@ -16,9 +16,9 @@ audit, and a rule-based recommendation for where each app should land.
 > This tool tells you *what* to rebuild, in what order, and what breaks if you
 > don't. The rebuilding is still yours.
 
-Status: **early development.** The schema, the URL normalizer, the fingerprint
-scheme, and the transport layer are implemented and tested. The crawl itself is
-not — see [docs/roadmap.md](docs/roadmap.md).
+Status: **early development.** The crawl and classification work; the analysis
+subcommands do not yet. Anything unimplemented raises rather than quietly
+succeeding — see [docs/roadmap.md](docs/roadmap.md).
 
 ## Why it is one program and not six
 
@@ -28,7 +28,7 @@ same crawl of the same portal. Shipping them separately means crawling an
 organization's portal four times to answer four questions about the same items.
 
 ```
-arcgis-inventory inventory      # crawl + classify
+arcgis-inventory inventory      # crawl + classify                      [works]
 arcgis-inventory dependencies   # app -> web map -> layers/geocoders/GP/print
 arcgis-inventory scan           # deprecated tech (JS 3.x, dojo, http://)
 arcgis-inventory audit-sharing  # public apps on private layers, orphans, dev refs
@@ -66,12 +66,47 @@ dependency; the tool talks raw ArcGIS REST over `httpx`.
 ```bash
 cp env.example .env    # then fill it in; .env is gitignored
 arcgis-inventory doctor
-arcgis-inventory init-db
+arcgis-inventory inventory
 ```
 
 Configuration is environment variables and user-supplied files only. There is no
 portal URL, item id, service URL, domain, or layer name anywhere in this
 repository, and there never will be.
+
+### Try it without a portal
+
+The repository ships a synthetic organization, so you can see what a crawl
+produces before pointing this at anything real:
+
+```bash
+arcgis-inventory inventory --fixture tests/fixtures/northgate --db /tmp/demo.sqlite
+```
+
+```
+platform            items
+web_map             13
+web_appbuilder      9
+experience_builder  2
+custom_js_app       1
+dashboard           1
+instant_app         1
+storymap            1
+web_scene           1
+widget_package      1
+run 1: partial --- 30 items, 2 errors --> /tmp/demo.sqlite
+```
+
+`partial` is correct there, not a bug: two items in the fixture are deliberately
+unreadable — one with malformed data, one returning a permission error. They are
+recorded in `crawl_error` with the reason, and the other 28 still land. A crawl
+that dies on item 400 of 5,000 is worse than useless.
+
+Every classification records *which signal fired*, because the first question
+anyone asks about "you have 9 Web AppBuilder apps" is how the tool knows:
+
+```sql
+SELECT title, platform, platform_confidence, platform_evidence FROM resource;
+```
 
 ## Handle the output carefully
 

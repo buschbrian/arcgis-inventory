@@ -16,11 +16,17 @@ from rich.table import Table
 
 from . import __version__
 from .config import RuntimeConfig, load_config
+from .crawl import CrawlResult, PortalClient, crawl_inventory
 from .db import SCHEMA_VERSION, open_database
 from .errors import ArcgisInventoryError, ConfigError
+from .transport import FixtureTransport, HttpTransport, Transport
 
 console = Console()
 err_console = Console(stderr=True)
+
+# The fixture org's portal URL. Only ever used with --fixture, where every
+# hostname is IANA-reserved and nothing resolves.
+_FIXTURE_PORTAL_URL = "https://northgate.example.gov/portal"
 
 app = typer.Typer(
     name="arcgis-inventory",
@@ -46,7 +52,7 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor."
+    "Implemented so far: init-db, doctor, inventory."
 )
 
 
@@ -137,16 +143,91 @@ def doctor() -> None:
         )
 
 
+@app.command()
+def inventory(
+    db: DbOption = None,
+    query: Annotated[
+        str, typer.Option("--query", "-q", help="ArcGIS search query. Empty crawls everything.")
+    ] = "",
+    fixture: Annotated[
+        Path | None,
+        typer.Option(
+            "--fixture",
+            help="Crawl a local fixture tree instead of a portal. No network, no credentials.",
+        ),
+    ] = None,
+    page_size: Annotated[
+        int | None, typer.Option("--page-size", help="Items per search request.")
+    ] = None,
+    skip_data: Annotated[
+        bool,
+        typer.Option(
+            "--skip-data", help="Do not fetch item data documents. Faster, far less useful."
+        ),
+    ] = False,
+) -> None:
+    """Crawl the portal: paginated item search, typed classification."""
+    target = _resolve_db(db)
+
+    if fixture is not None:
+        transport: Transport = FixtureTransport(fixture)
+        portal_url = _FIXTURE_PORTAL_URL
+        size = page_size or 10
+    else:
+        try:
+            cfg = load_config()
+        except ConfigError as exc:
+            _fail(str(exc))
+            return
+        if cfg.portal.is_anonymous:
+            err_console.print(
+                "[yellow]warning[/] crawling anonymously; only public items will be visible."
+            )
+        transport = HttpTransport(
+            timeout=cfg.timeout_seconds,
+            max_retries=cfg.max_retries,
+            max_rps=cfg.max_rps,
+            verify=cfg.portal.ca_bundle or cfg.portal.verify_ssl,
+            token=cfg.portal.token,
+        )
+        portal_url = cfg.portal.url
+        size = page_size or cfg.page_size
+
+    client = PortalClient(transport, portal_url, page_size=size)
+    conn = open_database(target)
+    try:
+        result = crawl_inventory(conn, client, query=query, fetch_data=not skip_data)
+    finally:
+        conn.close()
+        transport.close()
+
+    _report_crawl(result, target)
+
+
+def _report_crawl(result: CrawlResult, database: Path) -> None:
+    table = Table("platform", "items", box=None, pad_edge=False)
+    for platform, count in sorted(result.platforms.items(), key=lambda kv: (-kv[1], kv[0])):
+        table.add_row(platform, str(count))
+    if result.platforms:
+        console.print(table)
+
+    style = {"complete": "green", "partial": "yellow", "failed": "red"}[result.status]
+    console.print(
+        f"run {result.run_id}: [{style}]{result.status}[/] --- {result.item_count} items, "
+        f"{result.error_count} errors --> {database}"
+    )
+    if result.status == "partial":
+        err_console.print(
+            "[yellow]partial[/] some items could not be fully read. They are in `crawl_error` "
+            "with the reason --- a 403 there usually means the crawling account cannot see "
+            "something, which is often what the public cannot see either."
+        )
+
+
 # ---------------------------------------------------------------------------
 # Roadmap --- the subcommands from the design, declared so the shape of the tool
 # is visible and the help text is honest about what is missing.
 # ---------------------------------------------------------------------------
-
-
-@app.command()
-def inventory(db: DbOption = None) -> None:
-    """Crawl the portal: paginated item search, typed classification."""
-    raise NotImplementedError(_ROADMAP)
 
 
 @app.command()
