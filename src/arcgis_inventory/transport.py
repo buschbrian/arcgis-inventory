@@ -207,11 +207,20 @@ class FixtureTransport:
     """
 
     def __init__(
-        self, root: Path | str, *, strict: bool = True, overlay: str | None = None
+        self,
+        root: Path | str,
+        *,
+        strict: bool = True,
+        overlay: str | None = None,
+        anonymous: bool = False,
     ) -> None:
         self.root = Path(root)
         self.strict = strict
         self.overlay = overlay
+        # When set, a `<name>.anon.json` file wins if one exists --- the fixture's
+        # way of saying "this URL answers differently without credentials",
+        # which is what an unauthenticated sharing probe is testing for.
+        self.anonymous = anonymous
         self.requested: list[str] = []
 
     def get_json(self, url: str, params: dict[str, Any] | None = None) -> Response:
@@ -243,11 +252,17 @@ class FixtureTransport:
         relative = self._relative_path(url, params)
         if relative is None:
             return None
-        if self.overlay:
-            candidate = self.root / self.overlay / relative
+
+        bases = [self.root / self.overlay, self.root] if self.overlay else [self.root]
+        for base in bases:
+            if self.anonymous:
+                anon = (base / relative).with_name(f"{relative.stem}.anon.json")
+                if anon.is_file():
+                    return anon
+            candidate = base / relative
             if candidate.is_file():
                 return candidate
-        return self.root / relative
+        return self.root / relative  # reported as missing by the caller
 
     def _relative_path(self, url: str, params: dict[str, Any] | None) -> Path | None:
         parts = urlsplit(url)

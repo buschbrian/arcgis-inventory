@@ -31,7 +31,7 @@ organization's portal four times to answer four questions about the same items.
 arcgis-inventory inventory      # crawl + classify                      [works]
 arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
 arcgis-inventory scan           # deprecated tech (JS 3.x, dojo, http://)
-arcgis-inventory audit-sharing  # public apps on private layers, orphans, dev refs
+arcgis-inventory audit-sharing  # public apps on private layers         [works]
 arcgis-inventory recommend      # retire / instant app / experience builder / custom
 arcgis-inventory report         # Markdown + HTML rollup
 arcgis-inventory reprocess      # re-derive from stored JSON, no network    [works]
@@ -163,6 +163,62 @@ inside group layers to any depth, services referenced by URL with no portal item
 behind them, search-widget configurations pointing somewhere the app's web map
 never mentions, and **Arcade expressions** reaching into a layer the map does not
 list at all.
+
+Then audit it:
+
+```bash
+arcgis-inventory audit-sharing --db /tmp/demo.sqlite --probe --fixture tests/fixtures/northgate
+```
+
+```
+probing service endpoints anonymously (fixture)...
+  22 endpoints: 15 public, 6 restricted, 1 unreachable
+rule                     findings
+public-app-private-dep   3
+dev-host-reference       1
+http-service-dependency  1
+orphaned-owner           1
+unreachable-dependency   1
+run 3: 7 findings (7 new, 0 resolved since the last audit)
+```
+
+Every finding names the chain and what to do about it:
+
+```
+[critical] Publicly shared item depends on non-public DevelopmentProjects (FeatureServer)
+  Development Projects Map is shared publicly but reaches DevelopmentProjects
+  (FeatureServer) (access: org) via Development Projects Map -> Development
+  Projects -> DevelopmentProjects (FeatureServer). Anyone outside the
+  organization sees it broken.
+  -> Either share the dependency publicly or stop sharing the app publicly.
+     Confirm which was intended before changing either.
+```
+
+Note the middle hop. An app almost never touches a layer directly — it goes app
+→ web map → layer — so the graph is walked **transitively**. A rule that only
+looked at direct references would miss essentially every real instance.
+
+### `--probe` is opt-in, and it has to be
+
+Whether the *public* can reach a service cannot be determined by a crawl
+authenticated as someone who can see everything. It takes one **unauthenticated**
+request per endpoint — outbound traffic, often to hosts that don't belong to you.
+So it happens only when you ask.
+
+Without `--probe`, service sharing is unknown, and the exposure rule **stays
+silent rather than guessing**. Unknown is not private: reporting it as private is
+the false positive that trains people to ignore the rule.
+
+Findings carry stable fingerprints, so a re-run does not resurrect something
+you already dismissed — that failure mode is why people stop running scanners.
+A finding that stops firing gets `resolved_run` set rather than being deleted;
+that's *observed* resolved, which is a different claim from someone marking it
+fixed, and disagreement between the two is interesting.
+
+The dev/staging hostname patterns live in
+[`rules/sharing.yaml`](src/arcgis_inventory/rules/sharing.yaml) and are replaced
+wholesale by pointing `--rules` at your own copy. No organization's naming
+convention is baked into this repository.
 
 ## Handle the output carefully
 

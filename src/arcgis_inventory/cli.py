@@ -15,6 +15,8 @@ from rich.console import Console
 from rich.table import Table
 
 from . import __version__
+from .audit import AuditResult, load_rules, probe_endpoints
+from .audit import audit_sharing as audit_sharing_rules
 from .config import RuntimeConfig, load_config
 from .crawl import CrawlResult, PortalClient, crawl_inventory
 from .db import SCHEMA_VERSION, open_database
@@ -54,7 +56,7 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies."
+    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, audit-sharing."
 )
 
 
@@ -325,9 +327,107 @@ def scan(db: DbOption = None) -> None:
 
 
 @app.command("audit-sharing")
-def audit_sharing(db: DbOption = None) -> None:
-    """Find public apps depending on non-public layers, orphaned owners, dev-host refs."""
-    raise NotImplementedError(_ROADMAP)
+def audit_sharing(
+    db: DbOption = None,
+    probe: Annotated[
+        bool,
+        typer.Option(
+            "--probe",
+            help=(
+                "Make one UNAUTHENTICATED request per service endpoint to establish whether "
+                "the public can reach it. Off by default: these are outbound requests, often "
+                "to hosts outside your organization."
+            ),
+        ),
+    ] = False,
+    fixture: Annotated[
+        Path | None, typer.Option("--fixture", help="Probe a local fixture tree instead.")
+    ] = None,
+    rules: Annotated[
+        Path | None, typer.Option("--rules", help="Directory containing your own sharing.yaml.")
+    ] = None,
+) -> None:
+    """Find public apps depending on non-public layers, orphaned owners, dev-host refs.
+
+    Without --probe, service sharing is unknown and the public-exposure rule
+    stays silent rather than guessing.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` and `dependencies` first.")
+        return
+
+    conn = open_database(target)
+    try:
+        if probe:
+            transport, label = _probe_transport(fixture)
+            console.print(f"probing service endpoints anonymously ({label})...")
+            try:
+                probed = probe_endpoints(
+                    conn,
+                    transport,
+                    portal_id=conn.execute("SELECT MIN(portal_id) AS p FROM portal").fetchone()[
+                        "p"
+                    ],
+                )
+            finally:
+                transport.close()
+            console.print(
+                f"  {probed.probed} endpoints: {probed.public} public, "
+                f"{probed.restricted} restricted, {probed.unreachable} unreachable"
+            )
+
+        result = audit_sharing_rules(conn, rules=load_rules(rules))
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    _report_audit(result, probed=probe)
+
+
+def _probe_transport(fixture: Path | None) -> tuple[Transport, str]:
+    if fixture is not None:
+        return FixtureTransport(fixture, anonymous=True, strict=False), "fixture"
+    try:
+        cfg = load_config()
+    except ConfigError as exc:
+        _fail(str(exc))
+        raise
+    # No token, deliberately. A probe carrying the crawling account's
+    # credentials would mark every restricted service public --- the single
+    # worst wrong answer this tool could give.
+    return (
+        HttpTransport(
+            timeout=cfg.timeout_seconds,
+            max_retries=1,
+            max_rps=cfg.max_rps,
+            verify=cfg.portal.ca_bundle or cfg.portal.verify_ssl,
+            token=None,
+        ),
+        "no credentials",
+    )
+
+
+def _report_audit(result: AuditResult, *, probed: bool) -> None:
+    if result.findings:
+        table = Table("rule", "findings", box=None, pad_edge=False)
+        for rule, count in sorted(result.findings.items(), key=lambda kv: (-kv[1], kv[0])):
+            table.add_row(rule, str(count))
+        console.print(table)
+
+    console.print(
+        f"run {result.run_id}: [bold]{result.total}[/] findings "
+        f"({result.new} new, {result.resolved} resolved since the last audit)"
+    )
+
+    if result.unprobed_endpoints and not probed:
+        err_console.print(
+            f"[yellow]note[/] sharing is unknown for {result.unprobed_endpoints} service "
+            "endpoints, so the public-exposure rule could not run. Re-run with [bold]--probe[/] "
+            "to establish it with unauthenticated requests."
+        )
 
 
 @app.command()

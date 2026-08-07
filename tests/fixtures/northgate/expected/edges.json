@@ -182,6 +182,13 @@
     "layer_index": 2
   },
   {
+    "from_item_id": "a0000000000000000000000000000017",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer_OLD/MapServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/3/url",
+    "layer_index": null
+  },
+  {
     "from_item_id": "a0000000000000000000000000000018",
     "to_url": "https://services.northgate.example.gov/server/rest/services/Public/TrafficSignals/FeatureServer",
     "relation": "operational_layer",

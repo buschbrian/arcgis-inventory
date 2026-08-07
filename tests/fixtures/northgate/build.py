@@ -127,11 +127,22 @@ class Org:
         path = "".join(str(svc["path"]).split())
         return f"{scheme}://{host}/server/rest/services/{path}"
 
-    def layer_url(self, key: str, layer: int) -> str:
-        return f"{self.service_url(key)}/{layer}"
+    def layer_url(self, key: str, layer: int | None) -> str:
+        base = self.service_url(key)
+        return base if layer is None else f"{base}/{layer}"
 
     def service_layers(self, key: str) -> list[dict[str, Any]]:
-        return list(self.services[key].get("layers") or [])
+        """Declared layers, or one entry standing for the service itself.
+
+        A service that is gone answers 404 and therefore publishes no layer
+        list --- but a web map still references it. Without this fallback, case
+        17's dead service never becomes a graph node and the reachability rule
+        has nothing to fire on.
+        """
+        layers = self.services[key].get("layers")
+        if layers:
+            return list(layers)
+        return [{"id": None, "name": self.services[key]["path"].split("/")[-2]}]
 
     # -- items -------------------------------------------------------------
 
@@ -807,6 +818,22 @@ def _write_services(org: Org) -> None:
                 {"error": {"code": 404, "message": "Service not found.", "details": []}},
             )
             continue
+
+        # An anonymous request to a non-public service gets an error, not data.
+        # Same URL, different answer without credentials --- which is the entire
+        # mechanism `audit-sharing --probe` relies on, so the fixture has to
+        # model it or the probe path is untestable.
+        if svc["access"] != "public":
+            write_json(
+                target.with_name(f"{target.stem}.anon.json"),
+                {
+                    "error": {
+                        "code": 403,
+                        "message": "You do not have permissions to access this resource.",
+                        "details": [],
+                    }
+                },
+            )
 
         layers = svc.get("layers") or []
         write_json(

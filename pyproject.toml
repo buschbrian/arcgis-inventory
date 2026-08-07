@@ -81,6 +81,13 @@ packages = ["arcgis_inventory"]
 strict = true
 warn_unreachable = true
 
+# `types-networkx` exists but pulls in numpy's stubs, which use `type` statement
+# syntax that does not parse at our 3.11 target and fails the whole run. Not
+# worth raising the floor to 3.12 for graph-call type hints.
+[[tool.mypy.overrides]]
+module = ["networkx.*"]
+ignore_missing_imports = true
+
 [tool.coverage.run]
 source = ["src/arcgis_inventory"]
 branch = true

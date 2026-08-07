@@ -23,6 +23,14 @@
       "visibility": true,
       "opacity": 1,
       "title": "Outfalls"
+    },
+    {
+      "id": "layer_3",
+      "layerType": "ArcGISFeatureLayer",
+      "url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer_OLD/MapServer",
+      "visibility": true,
+      "opacity": 1,
+      "title": "StormSewer_OLD"
     }
   ],
   "baseMap": {

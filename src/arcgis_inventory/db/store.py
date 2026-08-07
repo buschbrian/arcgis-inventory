@@ -17,13 +17,17 @@ from typing import Any
 from ..classify import Classification
 
 __all__ = [
+    "FindingWrite",
     "ResourceWrite",
     "finish_run",
     "record_error",
     "record_usage",
+    "resolve_absent_findings",
+    "set_endpoint_sharing",
     "start_run",
     "upsert_edge",
     "upsert_endpoint",
+    "upsert_finding",
     "upsert_item",
     "upsert_portal",
 ]
@@ -222,7 +226,7 @@ def upsert_endpoint(
             portal_id,
             "endpoint",
             url_normalized,
-            url_normalized.rsplit("/", 2)[-2] if "/" in url_normalized else None,
+            _endpoint_title(url_normalized),
             host,
             None if is_https is None else int(is_https),
             service_type,
@@ -232,6 +236,19 @@ def upsert_endpoint(
         ),
     )
     return int(cursor.lastrowid or 0)
+
+
+def _endpoint_title(url: str) -> str:
+    """A readable label for a bare service: 'Parcels (FeatureServer)'.
+
+    Endpoints have no portal title, and a raw URL in a finding is unreadable at
+    a glance --- which matters, because these findings get shown to people who
+    do not administer the portal.
+    """
+    parts = [p for p in url.split("/") if p]
+    if len(parts) >= 2:
+        return f"{parts[-2]} ({parts[-1]})"
+    return url
 
 
 _PLATFORM_BY_SERVICE = {
@@ -280,6 +297,113 @@ def upsert_edge(
         (from_resource, to_resource, relation, source_path, _dumps(detail), run_id, run_id),
     )
     return int(cursor.lastrowid or 0)
+
+
+@dataclass(slots=True)
+class FindingWrite:
+    """One thing a rule has to say about a resource."""
+
+    fingerprint: str
+    rule_id: str
+    category: str
+    severity: str
+    title: str
+    resource_id: int | None = None
+    detail: str | None = None
+    evidence: dict[str, Any] | None = None
+    suggested_action: str | None = None
+
+
+def upsert_finding(
+    conn: sqlite3.Connection, *, portal_id: int, run_id: int, write: FindingWrite
+) -> int:
+    """Insert a finding, or refresh one that is still firing.
+
+    The whole point of the stable fingerprint arrives here: when a finding
+    already exists, its **authored triage state is not touched**. Someone marked
+    it `wontfix` with a note; re-running the audit must not undo that. Only the
+    generated description and the run bookkeeping are refreshed.
+    """
+    existing = conn.execute(
+        "SELECT finding_id FROM finding WHERE fingerprint = ?", (write.fingerprint,)
+    ).fetchone()
+
+    if existing is not None:
+        conn.execute(
+            "UPDATE finding SET severity = ?, title = ?, detail = ?, evidence_json = ?, "
+            "suggested_action = ?, last_seen_run = ?, resolved_run = NULL WHERE finding_id = ?",
+            (
+                write.severity,
+                write.title,
+                write.detail,
+                _dumps(write.evidence),
+                write.suggested_action,
+                run_id,
+                existing["finding_id"],
+            ),
+        )
+        return int(existing["finding_id"])
+
+    cursor = conn.execute(
+        "INSERT INTO finding (fingerprint, portal_id, resource_id, rule_id, category, severity, "
+        "title, detail, evidence_json, suggested_action, first_seen_run, last_seen_run) "
+        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        (
+            write.fingerprint,
+            portal_id,
+            write.resource_id,
+            write.rule_id,
+            write.category,
+            write.severity,
+            write.title,
+            write.detail,
+            _dumps(write.evidence),
+            write.suggested_action,
+            run_id,
+            run_id,
+        ),
+    )
+    return int(cursor.lastrowid or 0)
+
+
+def resolve_absent_findings(
+    conn: sqlite3.Connection, *, portal_id: int, run_id: int, rule_ids: list[str]
+) -> int:
+    """Mark findings that stopped firing this run.
+
+    `resolved_run` is *observed* --- the rule no longer matches --- which is a
+    different claim from `status = 'fixed'`, which someone asserted. Both are
+    worth having, and disagreement between them is interesting.
+    """
+    if not rule_ids:
+        return 0
+    placeholders = ", ".join("?" for _ in rule_ids)
+    cursor = conn.execute(
+        f"UPDATE finding SET resolved_run = ? WHERE portal_id = ? AND resolved_run IS NULL "
+        f"AND last_seen_run < ? AND rule_id IN ({placeholders})",
+        (run_id, portal_id, run_id, *rule_ids),
+    )
+    return cursor.rowcount
+
+
+def set_endpoint_sharing(
+    conn: sqlite3.Connection,
+    *,
+    resource_id: int,
+    access: str | None,
+    reachable: bool | None,
+    http_status: int | None,
+) -> None:
+    """Record what an unauthenticated request to a service endpoint found."""
+    conn.execute(
+        "UPDATE resource SET access = ?, reachable = ?, http_status = ? WHERE resource_id = ?",
+        (
+            access,
+            None if reachable is None else int(reachable),
+            http_status,
+            resource_id,
+        ),
+    )
 
 
 def record_usage(

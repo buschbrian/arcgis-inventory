@@ -88,7 +88,7 @@ def test_dependencies_builds_the_graph_after_a_crawl(
 
     result = runner.invoke(app, ["dependencies", "--db", str(db)])
     assert result.exit_code == 0, result.output
-    assert "63 dependencies" in result.output
+    assert "64 dependencies" in result.output
     assert "operational_layer" in result.output
 
 
@@ -117,9 +117,41 @@ def test_inventory_without_a_portal_fails_rather_than_crawling_nothing(
     assert result.exit_code == 2
 
 
+def test_audit_sharing_stays_silent_about_exposure_without_probe(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+    runner.invoke(app, ["dependencies", "--db", str(db)])
+
+    result = runner.invoke(app, ["audit-sharing", "--db", str(db)])
+    assert result.exit_code == 0, result.output
+    assert "public-app-private-dep" not in result.output
+    assert "--probe" in result.output  # and it says how to find out
+
+
+def test_audit_sharing_with_probe_finds_public_exposure(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+    runner.invoke(app, ["dependencies", "--db", str(db)])
+
+    result = runner.invoke(
+        app, ["audit-sharing", "--db", str(db), "--probe", "--fixture", str(fixture)]
+    )
+    assert result.exit_code == 0, result.output
+    assert "public-app-private-dep" in result.output
+    assert "restricted" in result.output
+
+
 @pytest.mark.parametrize(
     "command",
-    ["scan", "audit-sharing", "recommend", "report"],
+    ["scan", "recommend", "report"],
 )
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""

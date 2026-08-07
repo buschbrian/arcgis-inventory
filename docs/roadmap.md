@@ -16,8 +16,9 @@ before anything is pointed at a real portal.
   and `FixtureTransport` (disk, loud on an unmapped URL) behind one protocol, so
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
-- **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, and `reprocess`
-  work; every other subcommand raises rather than quietly succeeding.
+- **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, `reprocess`,
+  `dependencies`, and `audit-sharing` work; every other subcommand raises
+  rather than quietly succeeding.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -34,38 +35,36 @@ before anything is pointed at a real portal.
 
 - **`dependencies`** — `extract.py` (pure functions over JSON) + `dependencies.py`
   (resolution onto rows). App → web map → layers / geocoders / GP / print, with
-  a JSON pointer on every edge. Golden-tested against `expected/edges.json`: 63
+  a JSON pointer on every edge. Golden-tested against `expected/edges.json`: 64
   edges, exact. Endpoint *sharing* is deliberately left NULL — see below.
+
+- **`audit-sharing`** — `audit.py` + `rules/sharing.yaml`. Five rules over the
+  graph: public exposure (walked transitively via NetworkX), orphaned owners,
+  non-production host references, plaintext HTTP dependencies, and unreachable
+  services. Findings carry stable fingerprints, so authored triage survives a
+  re-run and a rule that stops firing sets `resolved_run` rather than deleting
+  the row. `--probe` is opt-in; without it the exposure rule stays silent.
 
 ## Next
 
-1. **`audit-sharing`** — the views are already in the schema and the graph is
-   now built; this wires them to findings with stable fingerprints. Highest-value
-   single feature in the tool.
-
-   **It has to probe.** `dependencies` leaves `resource.access` NULL for bare
-   service endpoints, because a crawl authenticated as someone who can see
-   everything cannot tell whether the *public* can reach a service. Determining
-   that takes an unauthenticated request per endpoint. Until it exists,
-   `v_public_app_private_dep` correctly returns nothing rather than a false
-   clean bill of health.
-
-2. **`scan`** — YAML rule format, deprecated-tech detection. Note that the two
+1. **`scan`** — YAML rule format, deprecated-tech detection. Note that the two
    items whose data could not be read have no dependencies recorded; the rules
    must treat that as missing knowledge, not as a simple app.
-3. **`recommend`** — rule-based target with generated reasoning. Bias toward
+2. **`recommend`** — rule-based target with generated reasoning. Bias toward
    Instant Apps for simple single-map apps rather than defaulting to Experience
    Builder.
-4. **`report`** — Markdown + HTML, generated from the fixture for the README.
-5. **`wab-export`** — dump WAB widget/theme/search config as migration
+3. **`report`** — Markdown + HTML, generated from the fixture for the README.
+4. **`wab-export`** — dump WAB widget/theme/search config as migration
    documentation.
 
 ## Known gaps
 
-- **Transitive reachability.** `v_public_app_private_dep` reports *direct*
-  edges, so a public app reaching a private layer through a web map is caught at
-  the web map, not at the app. Walking the graph transitively is
-  `audit-sharing`'s job; NetworkX is already a dependency and still unused.
+- **`v_public_app_private_dep` reports *direct* edges only.** The view is still
+  useful for a quick look in a SQLite browser, but `audit-sharing` walks the
+  graph transitively and its findings are authoritative. Do not read the view
+  and conclude the org is clean.
+- **Probe results are a point in time** and are stored on the endpoint rather
+  than per run, so there is no history of when a service changed sharing.
 - **Mermaid and Graphviz export** of the graph is not built yet.
 
 ## Explicitly out of scope

@@ -1,0 +1,50 @@
+# Default sharing-audit rules.
+#
+# Nothing here encodes any organization's naming. These are generic patterns
+# that happen to be near-universal; override the whole file by pointing
+# ARCGIS_RULES_DIR at a directory containing your own `sharing.yaml`.
+
+# Hostname substrings that suggest a non-production service. Matched
+# case-insensitively against the endpoint's host.
+#
+# Deliberately conservative: a false positive here sends someone chasing a
+# service that is fine, which is how a scanner loses its audience.
+dev_host_patterns:
+  - gis-dev
+  - -dev.
+  - dev-
+  - .dev.
+  - staging
+  - stage.
+  - -test.
+  - test-
+  - uat
+  - sandbox
+  - localhost
+
+# Severity assigned to each rule. Raise or lower to match how your organization
+# actually triages; the rule ids are stable.
+severities:
+  public-app-private-dep: critical
+  unreachable-dependency: high
+  http-service-dependency: high
+  dev-host-reference: high
+  orphaned-owner: medium
+
+# Item platforms that a member of the public can open directly, for the purpose
+# of the public-exposure rule.
+#
+# Web maps and scenes are on this list deliberately. A web map shared publicly
+# is openable in Map Viewer by anyone with the link --- it is not merely
+# "content behind an app", and if its layers are not public it is just as
+# broken for the same audience.
+exposed_platforms:
+  - web_appbuilder
+  - experience_builder
+  - dashboard
+  - instant_app
+  - storymap
+  - custom_js_app
+  - hub_site
+  - web_map
+  - web_scene
