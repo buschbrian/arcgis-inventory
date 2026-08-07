@@ -17,8 +17,8 @@ before anything is pointed at a real portal.
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
 - **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, `reprocess`,
-  `dependencies`, `audit-sharing`, `scan`, `recommend`, and `report` work;
-  `wab-export` raises rather than quietly succeeding.
+  `dependencies`, `audit-sharing`, `scan`, `recommend`, `report`, and
+  `wab-export` all work. A test asserts none of them raise NotImplementedError.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -62,10 +62,23 @@ before anything is pointed at a real portal.
   report does not know" section listing unread items, unprobed endpoints,
   missing graph, and missing recommendations.
 
+- **`wab-export`** — `wab_export.py`. One JSON document per Web AppBuilder app:
+  theme, pages, widgets flagged stock/custom, search sources and their fields,
+  services, dependencies with source paths, plus the recommendation and findings.
+  Raw config retained underneath. Unreadable apps are named in the manifest.
+  Every file states it is not a converted app.
+
 ## Next
 
-1. **`wab-export`** — dump WAB widget/theme/search config as migration
-   documentation.
+The roadmap above is complete. What comes next is not more subcommands:
+
+1. **Run it against a real portal.** Everything so far is verified against a
+   30-item synthetic org. A 5,000-item org will find rate limits, pagination
+   edge cases, item types not in the classifier, and configuration shapes the
+   extractors have never seen. Needs a read-only service account, not a personal
+   login.
+2. **Decide what the crawl does with what it learns there** — new fixture cases
+   for anything surprising, so the regression is permanent rather than a patch.
 
 ## Known gaps
 
@@ -75,7 +88,11 @@ before anything is pointed at a real portal.
   and conclude the org is clean.
 - **Probe results are a point in time** and are stored on the endpoint rather
   than per run, so there is no history of when a service changed sharing.
-- **Mermaid and Graphviz export** of the graph is not built yet.
+- **Mermaid and Graphviz export** of the graph is not built yet. NetworkX is
+  loaded for the transitive walk in `audit-sharing`, so the graph is already in
+  memory when a renderer would want it.
+- **No incremental crawl.** Every `inventory` run walks every item. Fine at 30,
+  probably fine at 5,000, unknown above that.
 - **`recommend` needs `dependencies` to have run.** Without the graph every app
   reads as a single-map app with no layers, which skews every verdict the same
   way. The CLI warns; it does not refuse.

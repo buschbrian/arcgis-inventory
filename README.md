@@ -16,9 +16,10 @@ audit, and a rule-based recommendation for where each app should land.
 > This tool tells you *what* to rebuild, in what order, and what breaks if you
 > don't. The rebuilding is still yours.
 
-Status: **early development.** The crawl and classification work; the analysis
-subcommands do not yet. Anything unimplemented raises rather than quietly
-succeeding — see [docs/roadmap.md](docs/roadmap.md).
+Status: **early but complete end to end.** Every subcommand works; the whole
+pipeline runs against a synthetic organization committed to this repo, with no
+network and no credentials. Not yet exercised against a large real portal — see
+[docs/roadmap.md](docs/roadmap.md) for what that will likely shake out.
 
 ## Why it is one program and not six
 
@@ -28,14 +29,19 @@ same crawl of the same portal. Shipping them separately means crawling an
 organization's portal four times to answer four questions about the same items.
 
 ```
-arcgis-inventory inventory      # crawl + classify                      [works]
-arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
-arcgis-inventory scan           # deprecated tech (WAB, JS 3.x, dojo)   [works]
-arcgis-inventory audit-sharing  # public apps on private layers         [works]
-arcgis-inventory recommend      # retire / instant app / EXB / custom    [works]
-arcgis-inventory report         # Markdown + HTML rollup               [works]
-arcgis-inventory reprocess      # re-derive from stored JSON, no network    [works]
+arcgis-inventory inventory      # crawl + classify
+arcgis-inventory dependencies   # app -> web map -> layers/geocoders/GP/print
+arcgis-inventory audit-sharing  # public apps on private layers, orphans, dev refs
+arcgis-inventory scan           # deprecated tech (WAB, JS 3.x, dojo)
+arcgis-inventory recommend      # retire / instant app / experience builder / custom
+arcgis-inventory report         # Markdown + HTML rollup
+arcgis-inventory wab-export     # WAB config as migration documentation
+arcgis-inventory reprocess      # re-derive from stored JSON, no network
 ```
+
+Only `inventory` talks to a portal. `audit-sharing --probe` makes
+unauthenticated requests when you ask it to. Everything else reads what the
+crawl stored.
 
 Every crawl keeps the portal's raw responses, so `reprocess` re-runs the rules
 over stored JSON in seconds instead of re-crawling:
@@ -343,6 +349,31 @@ most:
 A rollup like this gets forwarded and read as a complete picture, so it has to
 say what it skipped. If sharing was never probed, it says so in those words —
 **absence of exposure findings is not evidence of no exposure.**
+
+### Write down what each app did, before you can't
+
+```bash
+arcgis-inventory wab-export --db /tmp/demo.sqlite --out /tmp/wab
+```
+
+After Q4 2026 a Web AppBuilder app still runs but **cannot be opened for
+editing** — so the record of what it was configured to do becomes unreachable at
+exactly the moment somebody needs it to rebuild the thing. This writes one JSON
+document per app while it's still readable: theme, pages, every widget flagged
+stock or custom, search sources and the fields they searched, geocoder / print /
+GP services, dependencies with their JSON pointers, plus the recommendation and
+findings so whoever rebuilds it doesn't have to go back to the database. The raw
+config is retained underneath, so anything the exporter doesn't understand yet
+is still in the file.
+
+Apps whose configuration couldn't be read are listed **by name** in
+`manifest.json` rather than silently missing — those are the ones most at risk
+of being lost.
+
+Every file says, in itself, that it is not a converted app and cannot be
+imported anywhere. These end up as ticket attachments detached from this README,
+and a JSON file sitting next to a retirement deadline invites exactly the wrong
+assumption.
 
 ## Handle the output carefully
 

@@ -27,6 +27,7 @@ from .report import build_report, render_html, render_markdown
 from .reprocess import reprocess_inventory
 from .scan import load_scan_rules, scan_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
+from .wab_export import export_wab_apps
 
 console = Console()
 err_console = Console(stderr=True)
@@ -53,15 +54,6 @@ DbOption = Annotated[
         "--db", help="SQLite database path. Defaults to $ARCGIS_DB or output/inventory.sqlite."
     ),
 ]
-
-# Every subcommand below that is not yet implemented raises this rather than
-# printing a friendly no-op. A crawl command that silently does nothing is how
-# you end up believing an org is clean.
-_ROADMAP = (
-    "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, "
-    "audit-sharing, scan, recommend, report."
-)
 
 
 def _fail(message: str) -> None:
@@ -96,7 +88,7 @@ def _root(
 
 
 # ---------------------------------------------------------------------------
-# Implemented
+# Setup and crawling
 # ---------------------------------------------------------------------------
 
 
@@ -280,8 +272,8 @@ def reprocess(
 
 
 # ---------------------------------------------------------------------------
-# Roadmap --- the subcommands from the design, declared so the shape of the tool
-# is visible and the help text is honest about what is missing.
+# Analysis over the crawled data. Each of these reads what `inventory` stored;
+# none of them touch the network except `audit-sharing --probe`.
 # ---------------------------------------------------------------------------
 
 
@@ -614,9 +606,47 @@ def _default_output_dir() -> Path:
 
 
 @app.command("wab-export")
-def wab_export(db: DbOption = None) -> None:
-    """Dump Web AppBuilder widget/theme/search config to JSON as migration documentation."""
-    raise NotImplementedError(_ROADMAP)
+def wab_export(
+    db: DbOption = None,
+    out: Annotated[
+        Path | None,
+        typer.Option("--out", help="Directory to write into. Defaults to $ARCGIS_OUTPUT_DIR/wab."),
+    ] = None,
+) -> None:
+    """Dump Web AppBuilder widget/theme/search config to JSON as migration documentation.
+
+    After Q4 2026 these apps cannot be opened for editing, so the record of what
+    they were configured to do stops being reachable. This writes it out while
+    it still is.
+
+    Documentation only: it does not convert anything, and no converter exists.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first.")
+        return
+
+    directory = out or (_default_output_dir() / "wab")
+    conn = open_database(target)
+    try:
+        result = export_wab_apps(conn, directory)
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    console.print(
+        f"exported [bold]{result.exported}[/] Web AppBuilder app(s) to {result.directory}"
+    )
+    if result.skipped:
+        err_console.print(
+            f"[yellow]note[/] {len(result.skipped)} app(s) could not be exported because their "
+            "configuration was unreadable. They are listed by name in manifest.json --- these "
+            "are the ones most at risk of being lost."
+        )
+    if not result.exported and not result.skipped:
+        console.print("no Web AppBuilder apps in this portal.")
 
 
 def main() -> None:

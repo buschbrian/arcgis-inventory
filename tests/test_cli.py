@@ -256,9 +256,43 @@ def test_report_warns_about_its_own_gaps(tmp_path: Path, monkeypatch: pytest.Mon
     assert "does not know" in result.output
 
 
-@pytest.mark.parametrize("command", ["wab-export"])
-def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
-    """A crawl command that silently does nothing is how you conclude an org is clean."""
-    result = runner.invoke(app, [command])
-    assert result.exit_code != 0
-    assert isinstance(result.exception, NotImplementedError)
+def test_wab_export_writes_documentation(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    out = tmp_path / "wab"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["wab-export", "--db", str(db), "--out", str(out)])
+    assert result.exit_code == 0, result.output
+    assert "7" in result.output
+    assert (out / "manifest.json").exists()
+    # The two unreadable apps are surfaced, not silently missing.
+    assert "unreadable" in result.output
+
+
+def test_every_subcommand_is_implemented() -> None:
+    """The placeholder era is over: nothing raises NotImplementedError.
+
+    Kept as a guard --- a subcommand that silently does nothing is how you end
+    up believing an org is clean, so any future addition must either work or
+    fail loudly.
+    """
+    commands = [
+        "init-db",
+        "doctor",
+        "inventory",
+        "reprocess",
+        "dependencies",
+        "audit-sharing",
+        "scan",
+        "recommend",
+        "report",
+        "wab-export",
+    ]
+    listed = runner.invoke(app, ["--help"]).output
+    for command in commands:
+        assert command in listed
+        result = runner.invoke(app, [command, "--help"])
+        assert result.exit_code == 0, command
+        assert not isinstance(result.exception, NotImplementedError)
