@@ -74,12 +74,18 @@ jobs:
           # Fixtures and examples may only reference IANA-reserved names, so a
           # bug that makes a real request fails loudly instead of hitting
           # somebody's server -- and so no real org's URLs leak in.
+          # Reserved: anything under example.gov/com/org/net, and any host in
+          # the reserved `.example` TLD -- `\b` rather than a fixed delimiter,
+          # so a name inside backticks in prose still counts as reserved.
+          reserved='example\.(gov|com|org|net)(\b|$)|\.example(\b|$)|localhost|127\.0\.0\.1'
+          # Real hosts we legitimately link to in prose: docs, licenses, specs.
+          linkable='github\.com|arcgis\.com|esri\.com|iana\.org|opensource\.org|schemas?\.'
           hits=$(grep -rInE 'https?://[a-z0-9.-]+' \
                    --include='*.py' --include='*.json' --include='*.yaml' \
                    --include='*.yml' --include='*.md' \
                    tests docs README.md env.example \
-                 | grep -vE 'example\.(gov|com|org|net)|\.example[/"]|\.example$|localhost|127\.0\.0\.1' \
-                 | grep -vE 'github\.com|arcgis\.com|esri\.com|iana\.org|opensource\.org|schemas?\.' \
+                 | grep -vE "$reserved" \
+                 | grep -vE "$linkable" \
                  || true)
           if [ -n "$hits" ]; then
             echo "::error::non-example hostname referenced:"

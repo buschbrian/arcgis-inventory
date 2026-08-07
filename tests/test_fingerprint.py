@@ -9,11 +9,12 @@ import pytest
 from arcgis_inventory.fingerprint import finding_fingerprint
 
 ITEM = "a0000000000000000000000000000005"
+DEP = "https://services.example.gov/server/rest/services/Parcels/FeatureServer"
 
 
 def test_same_inputs_give_the_same_fingerprint() -> None:
-    a = finding_fingerprint("public-app-private-dep", ITEM, evidence={"dep": "https://x/0"})
-    b = finding_fingerprint("public-app-private-dep", ITEM, evidence={"dep": "https://x/0"})
+    a = finding_fingerprint("public-app-private-dep", ITEM, evidence={"dep": DEP})
+    b = finding_fingerprint("public-app-private-dep", ITEM, evidence={"dep": DEP})
     assert a == b
 
 
