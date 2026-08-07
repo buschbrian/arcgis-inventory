@@ -1,0 +1,28 @@
+{
+  "id": "a0000000000000000000000000000011",
+  "owner": "jokafor_ng",
+  "created": 1643068800000,
+  "modified": 1764633600000,
+  "title": "Water Main Break Dashboard",
+  "type": "Dashboard",
+  "typeKeywords": [
+    "ArcGIS Dashboards",
+    "Dashboard",
+    "Operations Dashboard"
+  ],
+  "description": "Open water main breaks and crew assignments.",
+  "tags": [
+    "water",
+    "breaks",
+    "operations"
+  ],
+  "snippet": "Open water main breaks and crew assignments.",
+  "url": "https://northgate.example.gov/apps/dashboards/a0000000000000000000000000000011",
+  "access": "org",
+  "size": 5603,
+  "numViews": 5590,
+  "ownerFolder": "d0000000000000000000000000000005",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

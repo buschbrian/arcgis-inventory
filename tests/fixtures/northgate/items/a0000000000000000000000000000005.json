@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000005",
+  "owner": "rpatel_ng",
+  "created": 1623628800000,
+  "modified": 1745884800000,
+  "title": "Development Projects Map",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Active development and plan review projects.",
+  "tags": [
+    "development",
+    "planning",
+    "public"
+  ],
+  "snippet": "Active development and plan review projects.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000005",
+  "access": "public",
+  "size": 4781,
+  "numViews": 12680,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

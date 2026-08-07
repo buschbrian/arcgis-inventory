@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000006",
+  "owner": "jokafor_ng",
+  "created": 1583366400000,
+  "modified": 1729123200000,
+  "title": "Utility Locate Request Viewer",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "JULIE locate requests against the utility network.",
+  "tags": [
+    "utilities",
+    "locates",
+    811
+  ],
+  "snippet": "JULIE locate requests against the utility network.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000006",
+  "access": "org",
+  "size": 4918,
+  "numViews": 890,
+  "ownerFolder": "d0000000000000000000000000000005",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

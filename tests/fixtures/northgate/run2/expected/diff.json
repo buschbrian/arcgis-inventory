@@ -1,0 +1,27 @@
+{
+  "captured_at": "2026-09-06",
+  "disappeared": [
+    "a0000000000000000000000000000004"
+  ],
+  "added": [
+    "a0000000000000000000000000000031"
+  ],
+  "view_increases": {
+    "a0000000000000000000000000000001": 2100,
+    "a0000000000000000000000000000010": 900,
+    "a0000000000000000000000000000003": 12400
+  },
+  "reshared": {
+    "a0000000000000000000000000000017": "public"
+  },
+  "resolved_endpoints": [
+    "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer_OLD/MapServer"
+  ],
+  "new_edges": [
+    {
+      "from_item_id": "a0000000000000000000000000000031",
+      "relation": "data_source",
+      "source_path": "/dataSources/dataSource_1/itemId"
+    }
+  ]
+}

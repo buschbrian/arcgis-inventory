@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": 404,
+    "message": "Service not found.",
+    "details": []
+  }
+}

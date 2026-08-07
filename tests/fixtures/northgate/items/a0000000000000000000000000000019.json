@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000019",
+  "owner": "jokafor_ng",
+  "created": 1527897600000,
+  "modified": 1770768000000,
+  "title": "Utilities Master",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Every buried asset, grouped by system.",
+  "tags": [
+    "utilities",
+    "water",
+    "sewer",
+    "storm"
+  ],
+  "snippet": "Every buried asset, grouped by system.",
+  "url": null,
+  "access": "org",
+  "size": 6699,
+  "numViews": 7460,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

@@ -1,0 +1,100 @@
+{
+  "appId": "a0000000000000000000000000000002",
+  "wabVersion": "2.29",
+  "title": "Public Works Asset Viewer",
+  "portalUrl": "https://northgate.example.gov/portal",
+  "theme": {
+    "name": "FoldableTheme",
+    "styles": [
+      "default"
+    ],
+    "version": "2.29"
+  },
+  "map": {
+    "3D": false,
+    "2D": true,
+    "itemId": "a0000000000000000000000000000019",
+    "mapOptions": {},
+    "appProxy": {
+      "mapItemId": "a0000000000000000000000000000019"
+    }
+  },
+  "widgetOnScreen": {
+    "widgets": []
+  },
+  "widgetPool": {
+    "groups": [
+      {
+        "label": "Group 1",
+        "widgets": [
+          {
+            "uri": "widgets/Search/Widget",
+            "id": "widgets_Search_Widget_0",
+            "version": "2.29",
+            "label": "Search",
+            "config": {}
+          },
+          {
+            "uri": "widgets/AttributeTable/Widget",
+            "id": "widgets_AttributeTable_Widget_3",
+            "version": "2.29",
+            "label": "AttributeTable",
+            "config": {}
+          },
+          {
+            "uri": "widgets/Select/Widget",
+            "id": "widgets_Select_Widget_6",
+            "version": "2.29",
+            "label": "Select",
+            "config": {}
+          }
+        ]
+      },
+      {
+        "label": "Group 2",
+        "widgets": [
+          {
+            "uri": "widgets/Legend/Widget",
+            "id": "widgets_Legend_Widget_1",
+            "version": "2.29",
+            "label": "Legend",
+            "config": {}
+          },
+          {
+            "uri": "widgets/Print/Widget",
+            "id": "widgets_Print_Widget_4",
+            "version": "2.29",
+            "label": "Print",
+            "config": {}
+          }
+        ]
+      },
+      {
+        "label": "Group 3",
+        "widgets": [
+          {
+            "uri": "widgets/LayerList/Widget",
+            "id": "widgets_LayerList_Widget_2",
+            "version": "2.29",
+            "label": "LayerList",
+            "config": {}
+          },
+          {
+            "uri": "widgets/Draw/Widget",
+            "id": "widgets_Draw_Widget_5",
+            "version": "2.29",
+            "label": "Draw",
+            "config": {}
+          }
+        ]
+      }
+    ]
+  },
+  "geocoder": {
+    "url": "https://geocode.regional-gis.example.org/server/rest/services/Composite/NorthgateLocator/GeocodeServer",
+    "name": "Northgate Locator"
+  },
+  "printTask": {
+    "url": "https://services.northgate.example.gov/server/rest/services/Utilities/PrintingTools/GPServer/Export%20Web%20Map%20Task"
+  }
+}

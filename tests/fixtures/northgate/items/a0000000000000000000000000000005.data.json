@@ -1,0 +1,50 @@
+{
+  "appId": "a0000000000000000000000000000005",
+  "wabVersion": "2.29",
+  "title": "Development Projects Map",
+  "portalUrl": "https://northgate.example.gov/portal",
+  "theme": {
+    "name": "FoldableTheme",
+    "styles": [
+      "default"
+    ],
+    "version": "2.29"
+  },
+  "map": {
+    "3D": false,
+    "2D": true,
+    "itemId": "a0000000000000000000000000000028",
+    "mapOptions": {},
+    "appProxy": {
+      "mapItemId": "a0000000000000000000000000000028"
+    }
+  },
+  "widgetOnScreen": {
+    "widgets": []
+  },
+  "widgetPool": {
+    "widgets": [
+      {
+        "uri": "widgets/Search/Widget",
+        "id": "widgets_Search_Widget_0",
+        "version": "2.29",
+        "label": "Search",
+        "config": {}
+      },
+      {
+        "uri": "widgets/Legend/Widget",
+        "id": "widgets_Legend_Widget_1",
+        "version": "2.29",
+        "label": "Legend",
+        "config": {}
+      },
+      {
+        "uri": "widgets/LayerList/Widget",
+        "id": "widgets_LayerList_Widget_2",
+        "version": "2.29",
+        "label": "LayerList",
+        "config": {}
+      }
+    ]
+  }
+}

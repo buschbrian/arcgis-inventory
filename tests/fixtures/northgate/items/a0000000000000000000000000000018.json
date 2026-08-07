@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000018",
+  "owner": "jokafor_ng",
+  "created": 1611014400000,
+  "modified": 1722988800000,
+  "title": "Traffic Signals",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Signalized intersections and controller types.",
+  "tags": [
+    "traffic",
+    "signals",
+    "transportation"
+  ],
+  "snippet": "Signalized intersections and controller types.",
+  "url": null,
+  "access": "public",
+  "size": 6562,
+  "numViews": 2210,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

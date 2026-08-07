@@ -1,0 +1,443 @@
+[
+  {
+    "from_item_id": "a0000000000000000000000000000001",
+    "to_item_id": "a0000000000000000000000000000016",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000002",
+    "to_item_id": "a0000000000000000000000000000019",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000002",
+    "to_url": "https://geocode.regional-gis.example.org/server/rest/services/Composite/NorthgateLocator/GeocodeServer",
+    "relation": "geocoder",
+    "source_path": "/geocoder/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000002",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/PrintingTools/GPServer",
+    "relation": "print_service",
+    "source_path": "/printTask/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000003",
+    "to_item_id": "a0000000000000000000000000000025",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000003",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Tools/PlowRouteOptimizer/GPServer",
+    "relation": "gp_service",
+    "source_path": "/gpServices/0/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000004",
+    "to_item_id": "a0000000000000000000000000000016",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000005",
+    "to_item_id": "a0000000000000000000000000000028",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000006",
+    "to_item_id": "a0000000000000000000000000000019",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000006",
+    "to_url": "https://gis-dev.northgate.example.gov/server/rest/services/Internal/UtilityLocate/FeatureServer",
+    "relation": "widget_config",
+    "source_path": "/widgetPool/widgets/0/config/sources/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000007",
+    "to_item_id": "a0000000000000000000000000000027",
+    "relation": "data_source",
+    "source_path": "/map/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000008",
+    "to_url": "https://geocode.regional-gis.example.org/server/rest/services/Composite/NorthgateLocator/GeocodeServer",
+    "relation": "geocoder",
+    "source_path": "/locatorUrl",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000008",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/VotingPrecincts/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000009",
+    "to_item_id": "a0000000000000000000000000000022",
+    "relation": "data_source",
+    "source_path": "/dataSources/dataSource_1/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000010",
+    "to_item_id": "a0000000000000000000000000000026",
+    "relation": "data_source",
+    "source_path": "/dataSources/dataSource_1/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000011",
+    "to_item_id": "a0000000000000000000000000000019",
+    "relation": "data_source",
+    "source_path": "/widgets/0/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000012",
+    "to_item_id": "a0000000000000000000000000000024",
+    "relation": "data_source",
+    "source_path": "/values/webmap",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000013",
+    "to_item_id": "a0000000000000000000000000000022",
+    "relation": "data_source",
+    "source_path": "/nodes/n-map-1/data/itemId",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000016",
+    "to_url": "https://basemaps.external-vendor.example.com/server/rest/services/Vector/CountyBasemap/MapServer",
+    "relation": "basemap",
+    "source_path": "/baseMap/baseMapLayers/0/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000016",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parcels/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000016",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parcels/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000016",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Zoning/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000016",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Zoning/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/3/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000017",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000017",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000017",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 2
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000018",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/TrafficSignals/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/SanitarySewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/0/layers/0/layers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/SanitarySewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/0/layers/0/layers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/0/layers/1/layers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/0/layers/1/layers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/0/layers/1/layers/2/url",
+    "layer_index": 2
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/1/layers/0/layers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/1/layers/0/layers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000019",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/layers/1/layers/0/layers/2/url",
+    "layer_index": 2
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000020",
+    "to_url": "https://basemaps.external-vendor.example.com/server/rest/services/Vector/CountyBasemap/MapServer",
+    "relation": "basemap",
+    "source_path": "/baseMap/baseMapLayers/0/url",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000020",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/TreeInventory/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000021",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "arcade_source",
+    "source_path": "/operationalLayers/0/popupInfo/expressionInfos/0/expression",
+    "layer_index": null
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000021",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000021",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000021",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 2
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000022",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000022",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000022",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000023",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Buildings3D/SceneServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000024",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/AddressPoints/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000024",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/VotingPrecincts/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000024",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/VotingPrecincts/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000025",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/PlowRoutes/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000025",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/PlowRoutes/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000025",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000025",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/3/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000026",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parks/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000026",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parks/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000026",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/BikePaths/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000027",
+    "to_url": "http://maps.northgate.example.gov/server/rest/services/Public/FloodZones/MapServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000027",
+    "to_url": "http://maps.northgate.example.gov/server/rest/services/Public/FloodZones/MapServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000028",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Internal/DevelopmentProjects/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000028",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Internal/DevelopmentProjects/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000028",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parcels/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/2/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000028",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parcels/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/3/url",
+    "layer_index": 1
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000029",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parks/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/0/url",
+    "layer_index": 0
+  },
+  {
+    "from_item_id": "a0000000000000000000000000000029",
+    "to_url": "https://services.northgate.example.gov/server/rest/services/Public/Parks/FeatureServer",
+    "relation": "operational_layer",
+    "source_path": "/operationalLayers/1/url",
+    "layer_index": 1
+  }
+]

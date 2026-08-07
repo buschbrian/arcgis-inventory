@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000025",
+  "owner": "jokafor_ng",
+  "created": 1604275200000,
+  "modified": 1795996800000,
+  "title": "Plow Routes",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Priority 1 through 3 plow routes.",
+  "tags": [
+    "snow",
+    "plow",
+    "routes"
+  ],
+  "snippet": "Priority 1 through 3 plow routes.",
+  "url": null,
+  "access": "public",
+  "size": 7521,
+  "numViews": 18900,
+  "ownerFolder": "d0000000000000000000000000000006",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

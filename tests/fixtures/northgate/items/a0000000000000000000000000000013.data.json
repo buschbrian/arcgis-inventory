@@ -1,0 +1,22 @@
+{
+  "root": "n-root",
+  "nodes": {
+    "n-root": {
+      "type": "story",
+      "data": {
+        "storyTheme": "summit"
+      },
+      "children": [
+        "n-map-1"
+      ]
+    },
+    "n-map-1": {
+      "type": "webmap",
+      "data": {
+        "itemId": "a0000000000000000000000000000022",
+        "itemType": "Web Map",
+        "caption": ""
+      }
+    }
+  }
+}

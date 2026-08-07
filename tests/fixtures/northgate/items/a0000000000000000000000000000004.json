@@ -1,0 +1,27 @@
+{
+  "id": "a0000000000000000000000000000004",
+  "owner": "former_staff_ng",
+  "created": 1549843200000,
+  "modified": 1566432000000,
+  "title": "Historic District Survey (2019)",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "One-time survey of the downtown historic district.",
+  "tags": [],
+  "snippet": "One-time survey of the downtown historic district.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000004",
+  "access": "org",
+  "size": 4644,
+  "numViews": 0,
+  "ownerFolder": "d0000000000000000000000000000002",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

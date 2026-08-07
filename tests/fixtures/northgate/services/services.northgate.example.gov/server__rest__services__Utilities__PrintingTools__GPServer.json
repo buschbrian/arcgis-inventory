@@ -1,0 +1,12 @@
+{
+  "currentVersion": 11.4,
+  "serviceDescription": "",
+  "serviceItemId": null,
+  "capabilities": "Map,Query",
+  "layers": [],
+  "tables": [],
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  }
+}

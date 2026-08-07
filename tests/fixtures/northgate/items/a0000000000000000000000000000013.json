@@ -1,0 +1,29 @@
+{
+  "id": "a0000000000000000000000000000013",
+  "owner": "rpatel_ng",
+  "created": 1707350400000,
+  "modified": 1732579200000,
+  "title": "Downtown Streetscape Plan",
+  "type": "StoryMap",
+  "typeKeywords": [
+    "arcgis-storymaps",
+    "StoryMap",
+    "Web Application"
+  ],
+  "description": "The plan for Washington Street, block by block.",
+  "tags": [
+    "downtown",
+    "streetscape",
+    "planning",
+    "public"
+  ],
+  "snippet": "The plan for Washington Street, block by block.",
+  "url": "https://northgate.example.gov/apps/storymaps/stories/a0000000000000000000000000000013",
+  "access": "public",
+  "size": 5877,
+  "numViews": 9820,
+  "ownerFolder": "d0000000000000000000000000000002",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

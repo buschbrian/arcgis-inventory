@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000026",
+  "owner": "rpatel_ng",
+  "created": 1620691200000,
+  "modified": null,
+  "title": "Parks",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Parks, playgrounds, and trailheads.",
+  "tags": [
+    "parks",
+    "trails",
+    "recreation"
+  ],
+  "snippet": "Parks, playgrounds, and trailheads.",
+  "url": null,
+  "access": "public",
+  "size": 7658,
+  "numViews": 14200,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

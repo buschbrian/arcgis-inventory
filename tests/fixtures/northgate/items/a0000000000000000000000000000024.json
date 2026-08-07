@@ -1,0 +1,29 @@
+{
+  "id": "a0000000000000000000000000000024",
+  "owner": "dchen_ng",
+  "created": 1581638400000,
+  "modified": 1743033600000,
+  "title": "Address Points",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Master address point layer.",
+  "tags": [
+    "addresses",
+    "geocoding"
+  ],
+  "snippet": "Master address point layer.",
+  "url": null,
+  "access": "public",
+  "size": 7384,
+  "numViews": null,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000008",
+  "owner": "dchen_ng",
+  "created": 1471564800000,
+  "modified": 1664496000000,
+  "title": "Election Precinct Finder",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Find your voting precinct and polling place.",
+  "tags": [
+    "elections",
+    "precincts",
+    "voting",
+    "public"
+  ],
+  "snippet": "Find your voting precinct and polling place.",
+  "url": "https://northgate.example.gov/apps/precinct-finder/",
+  "access": "public",
+  "size": 5192,
+  "numViews": 15330,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

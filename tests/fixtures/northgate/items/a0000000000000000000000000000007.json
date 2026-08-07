@@ -1,0 +1,32 @@
+{
+  "id": "a0000000000000000000000000000007",
+  "owner": "kmartinez_ng",
+  "created": 1563840000000,
+  "modified": 1682985600000,
+  "title": "Flood Awareness Map, \"Know Your Risk\"",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Floodplain and floodway,\nupdated after the 2023 study.",
+  "tags": [
+    "flood",
+    "floodplain",
+    "fema",
+    "public"
+  ],
+  "snippet": "Floodplain and floodway,\nupdated after the 2023 study.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000007",
+  "access": "public",
+  "size": 5055,
+  "numViews": 22940,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

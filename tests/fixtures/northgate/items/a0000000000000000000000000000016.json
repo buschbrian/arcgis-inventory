@@ -1,0 +1,29 @@
+{
+  "id": "a0000000000000000000000000000016",
+  "owner": "kmartinez_ng",
+  "created": 1553731200000,
+  "modified": 1751241600000,
+  "title": "Parcels & Zoning",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Parcel fabric with zoning and overlay districts.",
+  "tags": [
+    "parcels",
+    "zoning"
+  ],
+  "snippet": "Parcel fabric with zoning and overlay districts.",
+  "url": null,
+  "access": "public",
+  "size": 6288,
+  "numViews": 61200,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

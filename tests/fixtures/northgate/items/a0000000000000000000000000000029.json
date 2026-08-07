@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000029",
+  "owner": "dchen_ng",
+  "created": 1522713600000,
+  "modified": 1547510400000,
+  "title": "Parks",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Superseded parks map; kept for reference.",
+  "tags": [
+    "parks",
+    "legacy",
+    "superseded"
+  ],
+  "snippet": "Superseded parks map; kept for reference.",
+  "url": null,
+  "access": "org",
+  "size": 8069,
+  "numViews": 40,
+  "ownerFolder": "d0000000000000000000000000000002",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

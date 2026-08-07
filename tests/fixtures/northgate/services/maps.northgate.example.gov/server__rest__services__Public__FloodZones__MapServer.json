@@ -1,0 +1,23 @@
+{
+  "currentVersion": 11.4,
+  "serviceDescription": "",
+  "serviceItemId": null,
+  "capabilities": "Map,Query",
+  "layers": [
+    {
+      "id": 0,
+      "name": "Floodplain",
+      "type": "Feature Layer"
+    },
+    {
+      "id": 1,
+      "name": "Floodway",
+      "type": "Feature Layer"
+    }
+  ],
+  "tables": [],
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  }
+}

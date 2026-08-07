@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000017",
+  "owner": "jokafor_ng",
+  "created": 1541462400000,
+  "modified": 1713398400000,
+  "title": "Storm Sewer Network",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Storm structures, mains, and outfalls.",
+  "tags": [
+    "storm",
+    "sewer",
+    "utilities"
+  ],
+  "snippet": "Storm structures, mains, and outfalls.",
+  "url": null,
+  "access": "org",
+  "size": 6425,
+  "numViews": 1840,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

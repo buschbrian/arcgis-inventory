@@ -1,0 +1,317 @@
+{
+  "query": "",
+  "total": 30,
+  "start": 1,
+  "num": 10,
+  "nextStart": 11,
+  "results": [
+    {
+      "id": "a0000000000000000000000000000001",
+      "owner": "kmartinez_ng",
+      "created": 1554163200000,
+      "modified": 1718064000000,
+      "title": "Parcel & Zoning Lookup",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Look up a parcel and its zoning district.",
+      "tags": [
+        "parcels",
+        "zoning",
+        "public"
+      ],
+      "snippet": "Look up a parcel and its zoning district.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000001",
+      "access": "public",
+      "size": 4233,
+      "numViews": 48210,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000002",
+      "owner": "jokafor_ng",
+      "created": 1537142400000,
+      "modified": 1738540800000,
+      "title": "Public Works Asset Viewer",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Water, sanitary, and storm assets with editing and reporting.",
+      "tags": [
+        "utilities",
+        "assets",
+        "internal"
+      ],
+      "snippet": "Water, sanitary, and storm assets with editing and reporting.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000002",
+      "access": "org",
+      "size": 4370,
+      "numViews": 3120,
+      "ownerFolder": "d0000000000000000000000000000005",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000003",
+      "owner": "jokafor_ng",
+      "created": 1606694400000,
+      "modified": 1736294400000,
+      "title": "Snow Plow Route Status",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Live plow route status during a winter event.",
+      "tags": [
+        "snow",
+        "plow",
+        "winter",
+        "public"
+      ],
+      "snippet": "Live plow route status during a winter event.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000003",
+      "access": "public",
+      "size": 4507,
+      "numViews": 91455,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000004",
+      "owner": "former_staff_ng",
+      "created": 1549843200000,
+      "modified": 1566432000000,
+      "title": "Historic District Survey (2019)",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "One-time survey of the downtown historic district.",
+      "tags": [],
+      "snippet": "One-time survey of the downtown historic district.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000004",
+      "access": "org",
+      "size": 4644,
+      "numViews": 0,
+      "ownerFolder": "d0000000000000000000000000000002",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000005",
+      "owner": "rpatel_ng",
+      "created": 1623628800000,
+      "modified": 1745884800000,
+      "title": "Development Projects Map",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Active development and plan review projects.",
+      "tags": [
+        "development",
+        "planning",
+        "public"
+      ],
+      "snippet": "Active development and plan review projects.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000005",
+      "access": "public",
+      "size": 4781,
+      "numViews": 12680,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000006",
+      "owner": "jokafor_ng",
+      "created": 1583366400000,
+      "modified": 1729123200000,
+      "title": "Utility Locate Request Viewer",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "JULIE locate requests against the utility network.",
+      "tags": [
+        "utilities",
+        "locates",
+        811
+      ],
+      "snippet": "JULIE locate requests against the utility network.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000006",
+      "access": "org",
+      "size": 4918,
+      "numViews": 890,
+      "ownerFolder": "d0000000000000000000000000000005",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000007",
+      "owner": "kmartinez_ng",
+      "created": 1563840000000,
+      "modified": 1682985600000,
+      "title": "Flood Awareness Map, \"Know Your Risk\"",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Floodplain and floodway,\nupdated after the 2023 study.",
+      "tags": [
+        "flood",
+        "floodplain",
+        "fema",
+        "public"
+      ],
+      "snippet": "Floodplain and floodway,\nupdated after the 2023 study.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000007",
+      "access": "public",
+      "size": 5055,
+      "numViews": 22940,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000008",
+      "owner": "dchen_ng",
+      "created": 1471564800000,
+      "modified": 1664496000000,
+      "title": "Election Precinct Finder",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Find your voting precinct and polling place.",
+      "tags": [
+        "elections",
+        "precincts",
+        "voting",
+        "public"
+      ],
+      "snippet": "Find your voting precinct and polling place.",
+      "url": "https://northgate.example.gov/apps/precinct-finder/",
+      "access": "public",
+      "size": 5192,
+      "numViews": 15330,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000009",
+      "owner": "kmartinez_ng",
+      "created": 1710201600000,
+      "modified": 1768867200000,
+      "title": "Street Resurfacing Program",
+      "type": "Web Experience",
+      "typeKeywords": [
+        "ArcGIS Experience Builder",
+        "EXB Experience",
+        "JavaScript",
+        "Ready To Use",
+        "Web Experience"
+      ],
+      "description": "This year's street resurfacing program by ward.",
+      "tags": [
+        "streets",
+        "resurfacing",
+        "capital projects",
+        "public"
+      ],
+      "snippet": "This year's street resurfacing program by ward.",
+      "url": "https://northgate.example.gov/apps/experiencebuilder/experience/?id=a0000000000000000000000000000009",
+      "access": "public",
+      "size": 5329,
+      "numViews": 8460,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000010",
+      "owner": "rpatel_ng",
+      "created": 1725408000000,
+      "modified": 1763078400000,
+      "title": "Park & Trail Finder",
+      "type": "Web Experience",
+      "typeKeywords": [
+        "ArcGIS Experience Builder",
+        "EXB Experience",
+        "JavaScript",
+        "Ready To Use",
+        "Web Experience"
+      ],
+      "description": "Find a park, playground, or trailhead.",
+      "tags": [
+        "parks",
+        "trails",
+        "recreation",
+        "public"
+      ],
+      "snippet": "Find a park, playground, or trailhead.",
+      "url": "https://northgate.example.gov/apps/experiencebuilder/experience/?id=a0000000000000000000000000000010",
+      "access": "public",
+      "size": 5466,
+      "numViews": 33710,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    }
+  ]
+}

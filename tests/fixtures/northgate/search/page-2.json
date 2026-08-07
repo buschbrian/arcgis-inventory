@@ -1,0 +1,311 @@
+{
+  "query": "",
+  "total": 30,
+  "start": 11,
+  "num": 10,
+  "nextStart": 21,
+  "results": [
+    {
+      "id": "a0000000000000000000000000000011",
+      "owner": "jokafor_ng",
+      "created": 1643068800000,
+      "modified": 1764633600000,
+      "title": "Water Main Break Dashboard",
+      "type": "Dashboard",
+      "typeKeywords": [
+        "ArcGIS Dashboards",
+        "Dashboard",
+        "Operations Dashboard"
+      ],
+      "description": "Open water main breaks and crew assignments.",
+      "tags": [
+        "water",
+        "breaks",
+        "operations"
+      ],
+      "snippet": "Open water main breaks and crew assignments.",
+      "url": "https://northgate.example.gov/apps/dashboards/a0000000000000000000000000000011",
+      "access": "org",
+      "size": 5603,
+      "numViews": 5590,
+      "ownerFolder": "d0000000000000000000000000000005",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000012",
+      "owner": "dchen_ng",
+      "created": 1685404800000,
+      "modified": 1755561600000,
+      "title": "Address Point Lookup",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Ready To Use",
+        "selfConfigured",
+        "Web Map"
+      ],
+      "description": "Search an address and see its ward, precinct, and refuse day.",
+      "tags": [
+        "addresses",
+        "lookup",
+        "public"
+      ],
+      "snippet": "Search an address and see its ward, precinct, and refuse day.",
+      "url": "https://northgate.example.gov/apps/instant/nearby/index.html?appid=a0000000000000000000000000000012",
+      "access": "public",
+      "size": 5740,
+      "numViews": 27400,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000013",
+      "owner": "rpatel_ng",
+      "created": 1707350400000,
+      "modified": 1732579200000,
+      "title": "Downtown Streetscape Plan",
+      "type": "StoryMap",
+      "typeKeywords": [
+        "arcgis-storymaps",
+        "StoryMap",
+        "Web Application"
+      ],
+      "description": "The plan for Washington Street, block by block.",
+      "tags": [
+        "downtown",
+        "streetscape",
+        "planning",
+        "public"
+      ],
+      "snippet": "The plan for Washington Street, block by block.",
+      "url": "https://northgate.example.gov/apps/storymaps/stories/a0000000000000000000000000000013",
+      "access": "public",
+      "size": 5877,
+      "numViews": 9820,
+      "ownerFolder": "d0000000000000000000000000000002",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000014",
+      "owner": "kmartinez_ng",
+      "created": 1590019200000,
+      "modified": 1678752000000,
+      "title": "Bike Path Network",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "On-street bike lanes and off-street paths.",
+      "tags": [
+        "bike",
+        "trails",
+        "transportation",
+        "public"
+      ],
+      "snippet": "On-street bike lanes and off-street paths.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000014",
+      "access": "public",
+      "size": 6014,
+      "numViews": 4110,
+      "ownerFolder": "d0000000000000000000000000000004",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000015",
+      "owner": "dchen_ng",
+      "created": 1633996800000,
+      "modified": 1706572800000,
+      "title": "Internal Facilities Viewer",
+      "type": "Web Mapping Application",
+      "typeKeywords": [
+        "JavaScript",
+        "Map",
+        "Mapping Site",
+        "Online Map",
+        "Web AppBuilder",
+        "WAB2D"
+      ],
+      "description": "Building floor plans and access control points.",
+      "tags": [
+        "facilities",
+        "internal",
+        "security"
+      ],
+      "snippet": "Building floor plans and access control points.",
+      "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000015",
+      "access": "private",
+      "size": 6151,
+      "numViews": 260,
+      "ownerFolder": "d0000000000000000000000000000003",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000016",
+      "owner": "kmartinez_ng",
+      "created": 1553731200000,
+      "modified": 1751241600000,
+      "title": "Parcels & Zoning",
+      "type": "Web Map",
+      "typeKeywords": [
+        "ArcGIS Online",
+        "Explorer Web Map",
+        "Map",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Parcel fabric with zoning and overlay districts.",
+      "tags": [
+        "parcels",
+        "zoning"
+      ],
+      "snippet": "Parcel fabric with zoning and overlay districts.",
+      "url": null,
+      "access": "public",
+      "size": 6288,
+      "numViews": 61200,
+      "ownerFolder": "d0000000000000000000000000000001",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000017",
+      "owner": "jokafor_ng",
+      "created": 1541462400000,
+      "modified": 1713398400000,
+      "title": "Storm Sewer Network",
+      "type": "Web Map",
+      "typeKeywords": [
+        "ArcGIS Online",
+        "Explorer Web Map",
+        "Map",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Storm structures, mains, and outfalls.",
+      "tags": [
+        "storm",
+        "sewer",
+        "utilities"
+      ],
+      "snippet": "Storm structures, mains, and outfalls.",
+      "url": null,
+      "access": "org",
+      "size": 6425,
+      "numViews": 1840,
+      "ownerFolder": "d0000000000000000000000000000001",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000018",
+      "owner": "jokafor_ng",
+      "created": 1611014400000,
+      "modified": 1722988800000,
+      "title": "Traffic Signals",
+      "type": "Web Map",
+      "typeKeywords": [
+        "ArcGIS Online",
+        "Explorer Web Map",
+        "Map",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Signalized intersections and controller types.",
+      "tags": [
+        "traffic",
+        "signals",
+        "transportation"
+      ],
+      "snippet": "Signalized intersections and controller types.",
+      "url": null,
+      "access": "public",
+      "size": 6562,
+      "numViews": 2210,
+      "ownerFolder": "d0000000000000000000000000000001",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000019",
+      "owner": "jokafor_ng",
+      "created": 1527897600000,
+      "modified": 1770768000000,
+      "title": "Utilities Master",
+      "type": "Web Map",
+      "typeKeywords": [
+        "ArcGIS Online",
+        "Explorer Web Map",
+        "Map",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Every buried asset, grouped by system.",
+      "tags": [
+        "utilities",
+        "water",
+        "sewer",
+        "storm"
+      ],
+      "snippet": "Every buried asset, grouped by system.",
+      "url": null,
+      "access": "org",
+      "size": 6699,
+      "numViews": 7460,
+      "ownerFolder": "d0000000000000000000000000000001",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    },
+    {
+      "id": "a0000000000000000000000000000020",
+      "owner": "rpatel_ng",
+      "created": 1650585600000,
+      "modified": 1757894400000,
+      "title": "Tree Inventory",
+      "type": "Web Map",
+      "typeKeywords": [
+        "ArcGIS Online",
+        "Explorer Web Map",
+        "Map",
+        "Online Map",
+        "Web Map"
+      ],
+      "description": "Street tree inventory with species and condition.",
+      "tags": [
+        "trees",
+        "forestry",
+        "canopy"
+      ],
+      "snippet": "Street tree inventory with species and condition.",
+      "url": null,
+      "access": "public",
+      "size": 6836,
+      "numViews": 3300,
+      "ownerFolder": "d0000000000000000000000000000001",
+      "protected": false,
+      "spatialReference": "102671",
+      "culture": "en-us"
+    }
+  ]
+}

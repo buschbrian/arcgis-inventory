@@ -1,0 +1,32 @@
+{
+  "id": "a0000000000000000000000000000003",
+  "owner": "jokafor_ng",
+  "created": 1606694400000,
+  "modified": 1736294400000,
+  "title": "Snow Plow Route Status",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Live plow route status during a winter event.",
+  "tags": [
+    "snow",
+    "plow",
+    "winter",
+    "public"
+  ],
+  "snippet": "Live plow route status during a winter event.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000003",
+  "access": "public",
+  "size": 4507,
+  "numViews": 103855,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

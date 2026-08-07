@@ -1,0 +1,14 @@
+{
+  "id": "NgFiXtUrEoRg0001",
+  "name": "City of Northgate",
+  "portalName": "ArcGIS Enterprise",
+  "portalHostname": "northgate.example.gov/portal",
+  "isPortal": true,
+  "currentVersion": "11.4",
+  "urlKey": null,
+  "customBaseUrl": null,
+  "user": {
+    "username": "svc_inventory",
+    "role": "org_admin"
+  }
+}

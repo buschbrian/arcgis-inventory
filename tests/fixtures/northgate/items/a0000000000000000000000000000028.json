@@ -1,0 +1,29 @@
+{
+  "id": "a0000000000000000000000000000028",
+  "owner": "rpatel_ng",
+  "created": 1622505600000,
+  "modified": 1745280000000,
+  "title": "Development Projects",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Active projects in plan review.",
+  "tags": [
+    "development",
+    "planning"
+  ],
+  "snippet": "Active projects in plan review.",
+  "url": null,
+  "access": "public",
+  "size": 7932,
+  "numViews": 6400,
+  "ownerFolder": "d0000000000000000000000000000002",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

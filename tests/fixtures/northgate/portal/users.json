@@ -1,0 +1,32 @@
+{
+  "total": 4,
+  "start": 1,
+  "num": 4,
+  "nextStart": -1,
+  "users": [
+    {
+      "username": "kmartinez_ng",
+      "fullName": "K. Martinez",
+      "role": "org_publisher",
+      "disabled": false
+    },
+    {
+      "username": "jokafor_ng",
+      "fullName": "J. Okafor",
+      "role": "org_publisher",
+      "disabled": false
+    },
+    {
+      "username": "dchen_ng",
+      "fullName": "D. Chen",
+      "role": "org_admin",
+      "disabled": false
+    },
+    {
+      "username": "rpatel_ng",
+      "fullName": "R. Patel",
+      "role": "org_user",
+      "disabled": false
+    }
+  ]
+}

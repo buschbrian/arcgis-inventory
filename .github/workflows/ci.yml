@@ -49,6 +49,16 @@ jobs:
       - name: Test
         run: pytest --cov --cov-report=term-missing
 
+      - name: Fixture output matches its spec
+        # The generated tree is committed so fixture changes are legible in
+        # review. Regenerate and fail on any drift -- a hand-edited fixture that
+        # no longer matches spec.yaml is how golden tests start asserting
+        # something nobody intended.
+        if: matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
+        run: |
+          python tests/fixtures/northgate/build.py
+          git diff --exit-code -- tests/fixtures/northgate
+
   secrets-guard:
     # The repo's central constraint is that nothing organization-specific ever
     # lands in it. Enforce it in CI rather than trusting a rule to be remembered.
@@ -80,7 +90,9 @@ jobs:
           reserved='example\.(gov|com|org|net)(\b|$)|\.example(\b|$)|localhost|127\.0\.0\.1'
           # Real hosts we legitimately link to in prose: docs, licenses, specs.
           linkable='github\.com|arcgis\.com|esri\.com|iana\.org|opensource\.org|schemas?\.'
-          hits=$(grep -rInE 'https?://[a-z0-9.-]+' \
+          # Require a dotted host: a bare `http://` mentioned in prose is not a
+          # hostname and must not trip the guard.
+          hits=$(grep -rInE 'https?://[a-z0-9-]+(\.[a-z0-9-]+)+' \
                    --include='*.py' --include='*.json' --include='*.yaml' \
                    --include='*.yml' --include='*.md' \
                    tests docs README.md env.example \

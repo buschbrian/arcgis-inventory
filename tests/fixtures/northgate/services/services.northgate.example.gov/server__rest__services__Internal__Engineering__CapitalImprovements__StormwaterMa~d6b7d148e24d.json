@@ -1,0 +1,18 @@
+{
+  "currentVersion": 11.4,
+  "serviceDescription": "",
+  "serviceItemId": null,
+  "capabilities": "Query,Extract",
+  "layers": [
+    {
+      "id": 0,
+      "name": "Detention Basin Inspections",
+      "type": "Feature Layer"
+    }
+  ],
+  "tables": [],
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  }
+}

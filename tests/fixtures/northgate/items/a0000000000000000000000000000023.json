@@ -1,0 +1,28 @@
+{
+  "id": "a0000000000000000000000000000023",
+  "owner": "dchen_ng",
+  "created": 1693353600000,
+  "modified": 1759449600000,
+  "title": "Downtown 3D Buildings",
+  "type": "Web Scene",
+  "typeKeywords": [
+    "3D",
+    "ArcGIS Online",
+    "Web Scene"
+  ],
+  "description": "Extruded building footprints for the downtown core.",
+  "tags": [
+    "3d",
+    "buildings",
+    "downtown"
+  ],
+  "snippet": "Extruded building footprints for the downtown core.",
+  "url": null,
+  "access": "public",
+  "size": 7247,
+  "numViews": 1470,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

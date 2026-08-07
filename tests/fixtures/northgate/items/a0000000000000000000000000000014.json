@@ -1,0 +1,32 @@
+{
+  "id": "a0000000000000000000000000000014",
+  "owner": "kmartinez_ng",
+  "created": 1590019200000,
+  "modified": 1678752000000,
+  "title": "Bike Path Network",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "On-street bike lanes and off-street paths.",
+  "tags": [
+    "bike",
+    "trails",
+    "transportation",
+    "public"
+  ],
+  "snippet": "On-street bike lanes and off-street paths.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000014",
+  "access": "public",
+  "size": 6014,
+  "numViews": 4110,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

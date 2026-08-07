@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000001",
+  "owner": "kmartinez_ng",
+  "created": 1554163200000,
+  "modified": 1718064000000,
+  "title": "Parcel & Zoning Lookup",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Look up a parcel and its zoning district.",
+  "tags": [
+    "parcels",
+    "zoning",
+    "public"
+  ],
+  "snippet": "Look up a parcel and its zoning district.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000001",
+  "access": "public",
+  "size": 4233,
+  "numViews": 50310,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

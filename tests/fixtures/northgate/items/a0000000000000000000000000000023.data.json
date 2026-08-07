@@ -1,0 +1,16 @@
+{
+  "operationalLayers": [
+    {
+      "id": "scene_layer_0",
+      "layerType": "ArcGISSceneServiceLayer",
+      "url": "https://services.northgate.example.gov/server/rest/services/Public/Buildings3D/SceneServer/0",
+      "title": "Building Footprints 3D"
+    }
+  ],
+  "baseMap": {
+    "baseMapLayers": [],
+    "title": "Topographic"
+  },
+  "version": "1.34",
+  "authoringApp": "ArcGISSceneViewer"
+}

@@ -1,0 +1,12 @@
+{
+  "source": "instant/nearby",
+  "folderId": null,
+  "values": {
+    "webmap": "a0000000000000000000000000000024",
+    "theme": "light",
+    "searchConfiguration": {
+      "activeSourceIndex": "all"
+    },
+    "mapA11yDesc": "Map of address points"
+  }
+}

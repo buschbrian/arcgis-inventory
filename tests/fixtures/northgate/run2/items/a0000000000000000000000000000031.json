@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000031",
+  "owner": "jokafor_ng",
+  "created": 1787184000000,
+  "modified": 1788220800000,
+  "title": "Storm Sewer Network (Experience Builder)",
+  "type": "Web Experience",
+  "typeKeywords": [
+    "ArcGIS Experience Builder",
+    "EXB Experience",
+    "JavaScript",
+    "Ready To Use",
+    "Web Experience"
+  ],
+  "description": "Replacement for the Public Works Asset Viewer.",
+  "tags": [
+    "storm",
+    "sewer",
+    "utilities",
+    "exb"
+  ],
+  "snippet": "Replacement for the Public Works Asset Viewer.",
+  "url": "https://northgate.example.gov/apps/experiencebuilder/experience/?id=a0000000000000000000000000000031",
+  "access": "org",
+  "size": 8343,
+  "numViews": 40,
+  "ownerFolder": "d0000000000000000000000000000005",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

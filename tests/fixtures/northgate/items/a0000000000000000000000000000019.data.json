@@ -1,0 +1,118 @@
+{
+  "operationalLayers": [
+    {
+      "id": "group_0_0",
+      "layerType": "GroupLayer",
+      "title": "Utilities",
+      "visibilityMode": "independent",
+      "layers": [
+        {
+          "id": "group_1_0",
+          "layerType": "GroupLayer",
+          "title": "Wet Utilities",
+          "visibilityMode": "independent",
+          "layers": [
+            {
+              "id": "group_2_0",
+              "layerType": "GroupLayer",
+              "title": "Sanitary",
+              "visibilityMode": "independent",
+              "layers": [
+                {
+                  "id": "grp_3_0",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/SanitarySewer/FeatureServer/0",
+                  "title": "Sanitary Manholes"
+                },
+                {
+                  "id": "grp_3_1",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/SanitarySewer/FeatureServer/1",
+                  "title": "Sanitary Mains"
+                }
+              ]
+            },
+            {
+              "id": "group_2_1",
+              "layerType": "GroupLayer",
+              "title": "Storm",
+              "visibilityMode": "independent",
+              "layers": [
+                {
+                  "id": "grp_3_0",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer/0",
+                  "title": "Storm Structures"
+                },
+                {
+                  "id": "grp_3_1",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer/1",
+                  "title": "Storm Mains"
+                },
+                {
+                  "id": "grp_3_2",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer/2",
+                  "title": "Outfalls"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "group_1_1",
+          "layerType": "GroupLayer",
+          "title": "Water",
+          "visibilityMode": "independent",
+          "layers": [
+            {
+              "id": "group_2_0",
+              "layerType": "GroupLayer",
+              "title": "Distribution",
+              "visibilityMode": "independent",
+              "layers": [
+                {
+                  "id": "grp_3_0",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer/0",
+                  "title": "Hydrants"
+                },
+                {
+                  "id": "grp_3_1",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer/1",
+                  "title": "Valves"
+                },
+                {
+                  "id": "grp_3_2",
+                  "layerType": "ArcGISFeatureLayer",
+                  "url": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer/2",
+                  "title": "Water Mains"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "baseMap": {
+    "baseMapLayers": [
+      {
+        "id": "basemap_default",
+        "layerType": "VectorTileLayer",
+        "styleUrl": "https://basemaps.external-vendor.example.com/styles/topo.json",
+        "title": "Topographic"
+      }
+    ],
+    "title": "Topographic"
+  },
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  },
+  "version": "2.31",
+  "authoringApp": "ArcGISMapViewer",
+  "authoringAppVersion": "2026.1"
+}

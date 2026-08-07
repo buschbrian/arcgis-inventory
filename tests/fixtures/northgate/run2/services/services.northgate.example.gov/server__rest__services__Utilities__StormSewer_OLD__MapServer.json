@@ -1,0 +1,17 @@
+{
+  "currentVersion": 11.4,
+  "serviceDescription": "",
+  "capabilities": "Map,Query",
+  "layers": [
+    {
+      "id": 0,
+      "name": "Storm Mains (restored)",
+      "type": "Feature Layer"
+    }
+  ],
+  "tables": [],
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  }
+}

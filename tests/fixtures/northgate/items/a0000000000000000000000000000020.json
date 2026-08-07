@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000020",
+  "owner": "rpatel_ng",
+  "created": 1650585600000,
+  "modified": 1757894400000,
+  "title": "Tree Inventory",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Street tree inventory with species and condition.",
+  "tags": [
+    "trees",
+    "forestry",
+    "canopy"
+  ],
+  "snippet": "Street tree inventory with species and condition.",
+  "url": null,
+  "access": "public",
+  "size": 6836,
+  "numViews": 3300,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

@@ -1,0 +1,209 @@
+[
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/AddressPoints/FeatureServer",
+    "key": "svc_address_points",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/BikePaths/FeatureServer",
+    "key": "svc_bike_paths",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/Buildings3D/SceneServer",
+    "key": "svc_buildings_3d",
+    "service_type": "SceneServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Internal/DevelopmentProjects/FeatureServer",
+    "key": "svc_dev_projects",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://basemaps.external-vendor.example.com/server/rest/services/Vector/CountyBasemap/MapServer",
+    "key": "svc_external_basemap",
+    "service_type": "MapServer",
+    "is_https": true,
+    "host": "basemaps.external-vendor.example.com",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://maps.northgate.example.gov/server/rest/services/Public/FloodZones/MapServer",
+    "key": "svc_flood_legacy",
+    "service_type": "MapServer",
+    "is_https": false,
+    "host": "maps.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://geocode.regional-gis.example.org/server/rest/services/Composite/NorthgateLocator/GeocodeServer",
+    "key": "svc_geocode",
+    "service_type": "GeocodeServer",
+    "is_https": true,
+    "host": "geocode.regional-gis.example.org",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer_OLD/MapServer",
+    "key": "svc_gone",
+    "service_type": "MapServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": false
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Tools/PlowRouteOptimizer/GPServer",
+    "key": "svc_gp_plow",
+    "service_type": "GPServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Internal/Engineering/CapitalImprovements/StormwaterManagement/DetentionBasins/InspectionHistory/2019Through2026/DetentionBasinInspectionHistoryArchive/FeatureServer",
+    "key": "svc_long_path",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/Parcels/FeatureServer",
+    "key": "svc_parcels",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/Parks/FeatureServer",
+    "key": "svc_parks",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/PlowRoutes/FeatureServer",
+    "key": "svc_plow_routes",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/VotingPrecincts/FeatureServer",
+    "key": "svc_precincts",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/PrintingTools/GPServer",
+    "key": "svc_print",
+    "service_type": "GPServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/SanitarySewer/FeatureServer",
+    "key": "svc_sanitary_sewer",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/StormSewer/FeatureServer",
+    "key": "svc_storm_sewer",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/StreetCenterlines/FeatureServer",
+    "key": "svc_street_centerlines",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/TrafficSignals/FeatureServer",
+    "key": "svc_traffic_signals",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/TreeInventory/FeatureServer",
+    "key": "svc_trees",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://gis-dev.northgate.example.gov/server/rest/services/Internal/UtilityLocate/FeatureServer",
+    "key": "svc_utility_locate_dev",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "gis-dev.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Utilities/WaterDistribution/FeatureServer",
+    "key": "svc_water",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "org",
+    "reachable": true
+  },
+  {
+    "url_normalized": "https://services.northgate.example.gov/server/rest/services/Public/Zoning/FeatureServer",
+    "key": "svc_zoning",
+    "service_type": "FeatureServer",
+    "is_https": true,
+    "host": "services.northgate.example.gov",
+    "access": "public",
+    "reachable": true
+  }
+]

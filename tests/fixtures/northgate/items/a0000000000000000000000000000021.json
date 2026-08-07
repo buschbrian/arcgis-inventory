@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000021",
+  "owner": "jokafor_ng",
+  "created": 1631059200000,
+  "modified": 1747785600000,
+  "title": "Fire Hydrant Inspection",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Hydrant flow test results and inspection status.",
+  "tags": [
+    "hydrants",
+    "inspection",
+    "fire"
+  ],
+  "snippet": "Hydrant flow test results and inspection status.",
+  "url": null,
+  "access": "org",
+  "size": 6973,
+  "numViews": 1290,
+  "ownerFolder": "d0000000000000000000000000000005",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

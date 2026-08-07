@@ -1,0 +1,23 @@
+{
+  "total": 3,
+  "start": 1,
+  "num": 3,
+  "nextStart": -1,
+  "results": [
+    {
+      "id": "g0000000000000000000000000000001",
+      "title": "Public Works",
+      "access": "org"
+    },
+    {
+      "id": "g0000000000000000000000000000002",
+      "title": "Community Development",
+      "access": "org"
+    },
+    {
+      "id": "g0000000000000000000000000000003",
+      "title": "Public Web Content",
+      "access": "org"
+    }
+  ]
+}

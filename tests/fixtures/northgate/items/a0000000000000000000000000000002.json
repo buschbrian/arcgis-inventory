@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000002",
+  "owner": "jokafor_ng",
+  "created": 1537142400000,
+  "modified": 1738540800000,
+  "title": "Public Works Asset Viewer",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Water, sanitary, and storm assets with editing and reporting.",
+  "tags": [
+    "utilities",
+    "assets",
+    "internal"
+  ],
+  "snippet": "Water, sanitary, and storm assets with editing and reporting.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000002",
+  "access": "org",
+  "size": 4370,
+  "numViews": 3120,
+  "ownerFolder": "d0000000000000000000000000000005",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

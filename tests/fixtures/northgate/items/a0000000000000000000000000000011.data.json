@@ -1,0 +1,28 @@
+{
+  "version": 66,
+  "layout": {
+    "rootElement": {
+      "type": "stackLayoutElement",
+      "orientation": "col"
+    }
+  },
+  "widgets": [
+    {
+      "type": "mapWidget",
+      "id": "map_widget_1",
+      "name": "Utilities",
+      "itemId": "a0000000000000000000000000000019",
+      "mapTools": [
+        {
+          "type": "mapDefaultTools"
+        }
+      ]
+    },
+    {
+      "type": "indicatorWidget",
+      "id": "indicator_1",
+      "name": "Open breaks"
+    }
+  ],
+  "theme": "light"
+}

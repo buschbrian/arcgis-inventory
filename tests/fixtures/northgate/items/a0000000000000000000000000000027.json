@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000027",
+  "owner": "kmartinez_ng",
+  "created": 1561939200000,
+  "modified": 1682640000000,
+  "title": "Floodplain & Floodway",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "FEMA floodplain and floodway.",
+  "tags": [
+    "flood",
+    "fema",
+    "floodplain"
+  ],
+  "snippet": "FEMA floodplain and floodway.",
+  "url": null,
+  "access": "public",
+  "size": 7795,
+  "numViews": 8700,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

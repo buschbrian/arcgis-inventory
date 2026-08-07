@@ -1,0 +1,32 @@
+{
+  "id": "a0000000000000000000000000000012",
+  "owner": "dchen_ng",
+  "created": 1685404800000,
+  "modified": 1755561600000,
+  "title": "Address Point Lookup",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Ready To Use",
+    "selfConfigured",
+    "Web Map"
+  ],
+  "description": "Search an address and see its ward, precinct, and refuse day.",
+  "tags": [
+    "addresses",
+    "lookup",
+    "public"
+  ],
+  "snippet": "Search an address and see its ward, precinct, and refuse day.",
+  "url": "https://northgate.example.gov/apps/instant/nearby/index.html?appid=a0000000000000000000000000000012",
+  "access": "public",
+  "size": 5740,
+  "numViews": 27400,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

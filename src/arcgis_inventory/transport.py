@@ -18,6 +18,7 @@ Two implementations of one protocol:
 
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from dataclasses import dataclass
@@ -29,7 +30,28 @@ import httpx
 
 from .errors import FixtureMissingError, PortalError, RateLimitedError
 
-__all__ = ["FixtureTransport", "HttpTransport", "Response", "Transport"]
+__all__ = [
+    "FixtureTransport",
+    "HttpTransport",
+    "Response",
+    "Transport",
+    "fixture_service_filename",
+]
+
+# Service paths become one flat filename rather than a directory tree. A real
+# REST path can be deep enough that `<repo>/tests/fixtures/.../<path>.json`
+# exceeds the Windows 260-character limit, at which point git cannot even read
+# the directory --- and Windows is exactly where this tool's users are.
+_MAX_SLUG = 80
+
+
+def fixture_service_filename(service_path: str) -> str:
+    """Flatten a REST service path into a single, bounded filename component."""
+    slug = service_path.strip("/").replace("/", "__")
+    if len(slug) > _MAX_SLUG:
+        digest = hashlib.sha256(slug.encode("utf-8")).hexdigest()[:12]
+        slug = f"{slug[:_MAX_SLUG]}~{digest}"
+    return f"{slug}.json"
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,14 +187,31 @@ def _parse(reply: httpx.Response) -> Any:
 class FixtureTransport:
     """Serve the synthetic fixture org from disk.
 
-    Resolution is deliberately dumb and inspectable: the URL's host and path
-    become a file path under ``root``. An unmapped URL is a hard failure ---
-    never an empty result.
+    Resolution mirrors the fixture's on-disk layout, which is organized by what
+    a file *is* rather than by URL shape, so a human reviewing a fixture diff
+    can find things::
+
+        portal/self.json      <- /sharing/rest/portals/self
+        portal/users.json     <- /sharing/rest/community/users
+        search/page-N.json    <- /sharing/rest/search?start=...
+        items/<id>.json       <- /sharing/rest/content/items/<id>
+        items/<id>.data.json  <- /sharing/rest/content/items/<id>/data
+        services/<host>/<slug>.json   <- any /rest/services/... URL, path
+                                         flattened (see fixture_service_filename)
+
+    An unmapped URL is a hard failure, never an empty result: a silently-empty
+    response makes a broken crawler look like a clean org.
+
+    ``overlay`` selects a subdirectory (``run2``) that is consulted first, so
+    the second crawl can redefine only what changed.
     """
 
-    def __init__(self, root: Path | str, *, strict: bool = True) -> None:
+    def __init__(
+        self, root: Path | str, *, strict: bool = True, overlay: str | None = None
+    ) -> None:
         self.root = Path(root)
         self.strict = strict
+        self.overlay = overlay
         self.requested: list[str] = []
 
     def get_json(self, url: str, params: dict[str, Any] | None = None) -> Response:
@@ -186,22 +225,63 @@ class FixtureTransport:
                     "broken crawler look like a clean org."
                 )
             return Response(url=url, status=404, data=None)
-        return Response(url=url, status=200, data=json.loads(path.read_text(encoding="utf-8")))
+
+        text = path.read_text(encoding="utf-8")
+        try:
+            data = json.loads(text)
+        except ValueError as exc:
+            # Deliberate in the fixture (case 14). Surfaced the same way
+            # HttpTransport surfaces a portal that returns garbage, so the
+            # crawler's error path is exercised by the same code.
+            raise PortalError(
+                f"invalid JSON in fixture {path}: {exc}", url=url, status=200
+            ) from exc
+        return Response(url=url, status=200, data=data)
 
     def resolve(self, url: str, params: dict[str, Any] | None = None) -> Path | None:
         """Map a URL (plus paging params) onto a fixture file."""
+        relative = self._relative_path(url, params)
+        if relative is None:
+            return None
+        if self.overlay:
+            candidate = self.root / self.overlay / relative
+            if candidate.is_file():
+                return candidate
+        return self.root / relative
+
+    def _relative_path(self, url: str, params: dict[str, Any] | None) -> Path | None:
         parts = urlsplit(url)
         segments = [s for s in parts.path.split("/") if s]
-
-        # Paginated search: /sharing/rest/search?start=1&num=100 -> search/page-N.json
-        if segments[-1:] == ["search"]:
-            page = self._page_number(params)
-            return self.root / "search" / f"page-{page}.json"
-
-        base = self.root / parts.hostname if parts.hostname else self.root
         if not segments:
             return None
-        return (base / "/".join(segments)).with_suffix(".json")
+
+        rest = self._after_rest(segments)
+
+        # A service URL also contains `/rest/`, so disambiguate on what follows.
+        if rest is not None and rest[:1] != ["services"]:
+            return self._portal_path(rest, params)
+
+        host = parts.hostname or "unknown-host"
+        return Path("services") / host / fixture_service_filename("/".join(segments))
+
+    @staticmethod
+    def _after_rest(segments: list[str]) -> list[str] | None:
+        for i, segment in enumerate(segments):
+            if segment.lower() == "rest":
+                return segments[i + 1 :]
+        return None
+
+    def _portal_path(self, rest: list[str], params: dict[str, Any] | None) -> Path | None:
+        if rest[:1] == ["search"]:
+            return Path("search") / f"page-{self._page_number(params)}.json"
+        if rest[:2] == ["portals", "self"]:
+            return Path("portal") / "self.json"
+        if rest[:1] == ["community"] and rest[1:2] in (["users"], ["groups"]):
+            return Path("portal") / f"{rest[1]}.json"
+        if rest[:2] == ["content", "items"] and len(rest) >= 3:
+            suffix = ".data.json" if rest[3:4] == ["data"] else ".json"
+            return Path("items") / f"{rest[2]}{suffix}"
+        return None
 
     def _page_number(self, params: dict[str, Any] | None) -> int:
         start = int((params or {}).get("start", 1))

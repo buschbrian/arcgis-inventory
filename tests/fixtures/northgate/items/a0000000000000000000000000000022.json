@@ -1,0 +1,30 @@
+{
+  "id": "a0000000000000000000000000000022",
+  "owner": "kmartinez_ng",
+  "created": 1571097600000,
+  "modified": 1752019200000,
+  "title": "Street Centerlines",
+  "type": "Web Map",
+  "typeKeywords": [
+    "ArcGIS Online",
+    "Explorer Web Map",
+    "Map",
+    "Online Map",
+    "Web Map"
+  ],
+  "description": "Centerlines symbolized twice --- by class and by pavement condition.",
+  "tags": [
+    "streets",
+    "centerlines",
+    "transportation"
+  ],
+  "snippet": "Centerlines symbolized twice --- by class and by pavement condition.",
+  "url": null,
+  "access": "public",
+  "size": 7110,
+  "numViews": 5120,
+  "ownerFolder": "d0000000000000000000000000000001",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

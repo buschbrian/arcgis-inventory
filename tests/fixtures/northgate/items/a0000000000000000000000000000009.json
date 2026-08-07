@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000009",
+  "owner": "kmartinez_ng",
+  "created": 1710201600000,
+  "modified": 1768867200000,
+  "title": "Street Resurfacing Program",
+  "type": "Web Experience",
+  "typeKeywords": [
+    "ArcGIS Experience Builder",
+    "EXB Experience",
+    "JavaScript",
+    "Ready To Use",
+    "Web Experience"
+  ],
+  "description": "This year's street resurfacing program by ward.",
+  "tags": [
+    "streets",
+    "resurfacing",
+    "capital projects",
+    "public"
+  ],
+  "snippet": "This year's street resurfacing program by ward.",
+  "url": "https://northgate.example.gov/apps/experiencebuilder/experience/?id=a0000000000000000000000000000009",
+  "access": "public",
+  "size": 5329,
+  "numViews": 8460,
+  "ownerFolder": "d0000000000000000000000000000004",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

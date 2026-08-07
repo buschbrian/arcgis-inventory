@@ -1,0 +1,38 @@
+{
+  "operationalLayers": [
+    {
+      "id": "layer_0",
+      "layerType": "ArcGISFeatureLayer",
+      "url": "http://maps.northgate.example.gov/server/rest/services/Public/FloodZones/MapServer/0",
+      "visibility": true,
+      "opacity": 1,
+      "title": "Floodplain"
+    },
+    {
+      "id": "layer_1",
+      "layerType": "ArcGISFeatureLayer",
+      "url": "http://maps.northgate.example.gov/server/rest/services/Public/FloodZones/MapServer/1",
+      "visibility": true,
+      "opacity": 1,
+      "title": "Floodway"
+    }
+  ],
+  "baseMap": {
+    "baseMapLayers": [
+      {
+        "id": "basemap_default",
+        "layerType": "VectorTileLayer",
+        "styleUrl": "https://basemaps.external-vendor.example.com/styles/topo.json",
+        "title": "Topographic"
+      }
+    ],
+    "title": "Topographic"
+  },
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  },
+  "version": "2.31",
+  "authoringApp": "ArcGISMapViewer",
+  "authoringAppVersion": "2026.1"
+}

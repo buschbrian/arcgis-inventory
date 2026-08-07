@@ -1,0 +1,31 @@
+{
+  "id": "a0000000000000000000000000000015",
+  "owner": "dchen_ng",
+  "created": 1633996800000,
+  "modified": 1706572800000,
+  "title": "Internal Facilities Viewer",
+  "type": "Web Mapping Application",
+  "typeKeywords": [
+    "JavaScript",
+    "Map",
+    "Mapping Site",
+    "Online Map",
+    "Web AppBuilder",
+    "WAB2D"
+  ],
+  "description": "Building floor plans and access control points.",
+  "tags": [
+    "facilities",
+    "internal",
+    "security"
+  ],
+  "snippet": "Building floor plans and access control points.",
+  "url": "https://northgate.example.gov/apps/webappviewer/index.html?id=a0000000000000000000000000000015",
+  "access": "private",
+  "size": 6151,
+  "numViews": 260,
+  "ownerFolder": "d0000000000000000000000000000003",
+  "protected": false,
+  "spatialReference": "102671",
+  "culture": "en-us"
+}

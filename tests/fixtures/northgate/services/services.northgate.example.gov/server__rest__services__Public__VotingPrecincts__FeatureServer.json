@@ -1,0 +1,23 @@
+{
+  "currentVersion": 11.4,
+  "serviceDescription": "",
+  "serviceItemId": null,
+  "capabilities": "Query,Extract",
+  "layers": [
+    {
+      "id": 0,
+      "name": "Voting Precincts",
+      "type": "Feature Layer"
+    },
+    {
+      "id": 1,
+      "name": "Polling Places",
+      "type": "Feature Layer"
+    }
+  ],
+  "tables": [],
+  "spatialReference": {
+    "wkid": 102671,
+    "latestWkid": 3435
+  }
+}

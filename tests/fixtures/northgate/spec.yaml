@@ -1,0 +1,938 @@
+# Northgate --- the synthetic fixture org.
+#
+# Source of truth. `build.py` expands this into the portal-shaped JSON tree
+# alongside it. Both this file and the generated output are committed: tests
+# read the JSON so a fixture change is legible in review, and the generator
+# means adding a thirty-first item is not four hand-written files.
+#
+# Everything here is fictional. Hostnames are IANA-reserved (`.example`,
+# `example.gov`) so a bug that makes a real request fails loudly instead of
+# reaching somebody's server. Item ids are deterministic and obviously fake.
+#
+# The layer, field, and app vocabulary deliberately mirrors the municipal
+# pattern anyone who has taken an Esri course will recognize --- parcels,
+# zoning, storm and sanitary sewer, hydrants, address points, trees, plow
+# routes. The shapes are familiar on purpose; the organization is not real.
+#
+# Every item below exists to exercise a specific failure mode. A fixture org of
+# thirty plausible-but-uninteresting apps tests nothing.
+
+org:
+  name: City of Northgate
+  portal_url: https://northgate.example.gov/portal
+  online_url: https://northgate.maps.arcgis.example
+  services_host: services.northgate.example.gov
+  dev_host: gis-dev.northgate.example.gov
+  legacy_host: maps.northgate.example.gov      # the one still on http://
+  org_id: NgFiXtUrEoRg0001
+  version: "11.4"
+  kind: enterprise
+
+users:
+  - username: kmartinez_ng
+    fullName: K. Martinez
+    role: org_publisher
+  - username: jokafor_ng
+    fullName: J. Okafor
+    role: org_publisher
+  - username: dchen_ng
+    fullName: D. Chen
+    role: org_admin
+  - username: rpatel_ng
+    fullName: R. Patel
+    role: org_user
+  # Owns item 4 and appears in no user listing: the account is gone. This is
+  # what `owner_exists = 0` and `v_orphaned` are for.
+  - username: former_staff_ng
+    fullName: (departed)
+    exists: false
+
+groups:
+  - id: g0000000000000000000000000000001
+    title: Public Works
+  - id: g0000000000000000000000000000002
+    title: Community Development
+  - id: g0000000000000000000000000000003
+    title: Public Web Content
+
+# ---------------------------------------------------------------------------
+# Services. These become `resource` rows with kind='endpoint' --- many are not
+# portal items at all, which is exactly why the node table is unified.
+# ---------------------------------------------------------------------------
+services:
+  - key: svc_parcels
+    path: Public/Parcels/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Parcels }
+      - { id: 1, name: Parcel Lines }
+    exercises: "24 - hosted feature service, public. Baseline."
+
+  - key: svc_zoning
+    path: Public/Zoning/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Zoning Districts }
+      - { id: 1, name: Overlay Districts }
+
+  - key: svc_address_points
+    path: Public/AddressPoints/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Address Points }
+
+  # The target of the headline audit-sharing case: a public app reaches this,
+  # and it is not public.
+  - key: svc_dev_projects
+    path: Internal/DevelopmentProjects/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Development Projects }
+      - { id: 1, name: Plan Review Status }
+    exercises: "25 - org-only hosted feature service. Target of case 5."
+
+  - key: svc_storm_sewer
+    path: Utilities/StormSewer/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Storm Structures }
+      - { id: 1, name: Storm Mains }
+      - { id: 2, name: Outfalls }
+
+  - key: svc_sanitary_sewer
+    path: Utilities/SanitarySewer/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Sanitary Manholes }
+      - { id: 1, name: Sanitary Mains }
+
+  - key: svc_water
+    path: Utilities/WaterDistribution/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Hydrants }
+      - { id: 1, name: Valves }
+      - { id: 2, name: Water Mains }
+
+  - key: svc_street_centerlines
+    path: Public/StreetCenterlines/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Street Centerlines }
+      - { id: 1, name: Street Names }
+
+  - key: svc_traffic_signals
+    path: Public/TrafficSignals/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Traffic Signals }
+    exercises: "18's target - referenced by URL only, with no portal item."
+
+  - key: svc_trees
+    path: Public/TreeInventory/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Street Trees }
+
+  - key: svc_plow_routes
+    path: Public/PlowRoutes/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Plow Routes }
+      - { id: 1, name: Route Status }
+
+  - key: svc_precincts
+    path: Public/VotingPrecincts/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Voting Precincts }
+      - { id: 1, name: Polling Places }
+
+  - key: svc_parks
+    path: Public/Parks/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Parks }
+      - { id: 1, name: Trails }
+
+  - key: svc_bike_paths
+    path: Public/BikePaths/FeatureServer
+    type: FeatureServer
+    access: public
+    layers:
+      - { id: 0, name: Bike Paths }
+
+  - key: svc_buildings_3d
+    path: Public/Buildings3D/SceneServer
+    type: SceneServer
+    access: public
+    layers:
+      - { id: 0, name: Building Footprints 3D }
+
+  # Case 17: a web map points at this and it is gone.
+  - key: svc_gone
+    path: Utilities/StormSewer_OLD/MapServer
+    type: MapServer
+    access: public
+    http_status: 404
+    exercises: "17's target - reachability finding, reachable=0."
+
+  # Case 7: still on http://, on the old server nobody has migrated.
+  - key: svc_flood_legacy
+    host: maps.northgate.example.gov
+    scheme: http
+    path: Public/FloodZones/MapServer
+    type: MapServer
+    access: public
+    layers:
+      - { id: 0, name: Floodplain }
+      - { id: 1, name: Floodway }
+    exercises: "26 - legacy MapServer over http://. Non-HTTPS finding."
+
+  # Case 6: production app pointing at the dev box.
+  - key: svc_utility_locate_dev
+    host: gis-dev.northgate.example.gov
+    path: Internal/UtilityLocate/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Locate Requests }
+    exercises: "6's target - dev/staging host detection."
+
+  - key: svc_geocode
+    host: geocode.regional-gis.example.org
+    path: Composite/NorthgateLocator/GeocodeServer
+    type: GeocodeServer
+    access: public
+    exercises: "27 - geocode service on an external host. `geocoder` relation."
+
+  - key: svc_gp_plow
+    path: Tools/PlowRouteOptimizer/GPServer
+    type: GPServer
+    access: org
+    exercises: "28 - GP service. `gp_service` relation."
+
+  - key: svc_print
+    path: Utilities/PrintingTools/GPServer
+    type: GPServer
+    access: public
+    exercises: "29 - print service. `print_service` relation."
+
+  # Case 20: a basemap from outside the org entirely.
+  - key: svc_external_basemap
+    host: basemaps.external-vendor.example.com
+    path: Vector/CountyBasemap/MapServer
+    type: MapServer
+    access: public
+    layers:
+      - { id: 0, name: County Basemap }
+    exercises: "20's target - external domain detection."
+
+  # A very long path, near typical limits, to catch anything that truncates.
+  - key: svc_long_path
+    path: >-
+      Internal/Engineering/CapitalImprovements/StormwaterManagement/DetentionBasins/
+      InspectionHistory/2019Through2026/DetentionBasinInspectionHistoryArchive/FeatureServer
+    type: FeatureServer
+    access: org
+    layers:
+      - { id: 0, name: Detention Basin Inspections }
+    exercises: "Very long service URL near typical path limits."
+
+# ---------------------------------------------------------------------------
+# Items. `n` fixes the item id: n=1 -> a0000000000000000000000000000001.
+# `platform` / `confidence` are the expected classification --- the assertion,
+# not an input to the crawler.
+# ---------------------------------------------------------------------------
+items:
+
+  # --- Applications ---------------------------------------------------------
+
+  - key: app_parcel_zoning
+    n: 1
+    title: Parcel & Zoning Lookup
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Public Apps
+    numViews: 48210
+    created: "2019-04-02"
+    modified: "2024-06-11"
+    tags: [parcels, zoning, public]
+    snippet: Look up a parcel and its zoning district.
+    data:
+      kind: wab
+      map: map_parcels_zoning
+      widgets: [Search, Legend]
+    exercises: "1 - simple single-map WAB. Must recommend Instant App, not EXB."
+
+  - key: app_public_works_assets
+    n: 2
+    title: Public Works Asset Viewer
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Public Works
+    numViews: 3120
+    created: "2018-09-17"
+    modified: "2025-02-03"
+    tags: [utilities, assets, internal]
+    snippet: Water, sanitary, and storm assets with editing and reporting.
+    data:
+      kind: wab
+      map: map_utilities_master
+      widgets: [Search, Legend, LayerList, AttributeTable, Print, Draw, Select]
+      pages: 3
+      geocoder: svc_geocode
+      print: svc_print
+    exercises: "2 - multi-widget, multi-page WAB. Must recommend Experience Builder."
+
+  - key: app_plow_status
+    n: 3
+    title: Snow Plow Route Status
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: jokafor_ng
+    access: public
+    folder: Public Apps
+    numViews: 91455
+    created: "2020-11-30"
+    modified: "2025-01-08"
+    tags: [snow, plow, winter, public]
+    snippet: Live plow route status during a winter event.
+    data:
+      kind: wab
+      map: map_plow_routes
+      widgets: [Search, Legend, LayerList]
+      custom_widgets: [NorthgatePlowStatus]
+      gp: svc_gp_plow
+    exercises: "3 - WAB with a custom widget package. Must recommend Custom; widget package detection."
+
+  - key: app_historic_survey
+    n: 4
+    title: Historic District Survey (2019)
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: former_staff_ng
+    access: org
+    folder: Community Development
+    numViews: 0
+    created: "2019-02-11"
+    modified: "2019-08-22"
+    tags: []
+    snippet: One-time survey of the downtown historic district.
+    data:
+      kind: wab
+      map: map_parcels_zoning
+      widgets: [Legend]
+    exercises: "4 - deleted owner, 0 views. Retire recommendation; owner_exists=0; v_orphaned; v_dead. Also the no-tags case."
+
+  - key: app_development_projects
+    n: 5
+    title: Development Projects Map
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Public Apps
+    numViews: 12680
+    created: "2021-06-14"
+    modified: "2025-04-29"
+    tags: [development, planning, public]
+    snippet: Active development and plan review projects.
+    data:
+      kind: wab
+      map: map_development_projects
+      widgets: [Search, Legend, LayerList]
+    exercises: "5 - PUBLIC app -> web map -> ORG-ONLY layer. The audit-sharing headline case."
+
+  - key: app_utility_locate
+    n: 6
+    title: Utility Locate Request Viewer
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Public Works
+    numViews: 890
+    created: "2020-03-05"
+    modified: "2024-10-17"
+    tags: [utilities, locates, 811]
+    snippet: JULIE locate requests against the utility network.
+    data:
+      kind: wab
+      map: map_utilities_master
+      widgets: [Search, LayerList]
+      extra_layers: [svc_utility_locate_dev]
+    exercises: "6 - production app referencing the dev host. Dev/staging detection."
+
+  - key: app_flood_awareness
+    n: 7
+    title: 'Flood Awareness Map, "Know Your Risk"'
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Public Apps
+    numViews: 22940
+    created: "2019-07-23"
+    modified: "2023-05-02"
+    tags: [flood, floodplain, fema, public]
+    snippet: |-
+      Floodplain and floodway,
+      updated after the 2023 study.
+    title_nasty: true
+    data:
+      kind: wab
+      map: map_flood
+      widgets: [Search, Legend]
+    exercises: "7 - depends on an http:// map service. Also the nasty-title case: comma, double quote, and a newline in the snippet, for CSV/Excel escaping."
+
+  - key: app_precinct_finder
+    n: 8
+    title: Election Precinct Finder
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web Map]
+    platform: custom_js_app
+    confidence: likely
+    owner: dchen_ng
+    access: public
+    folder: Public Apps
+    numViews: 15330
+    created: "2016-08-19"
+    modified: "2022-09-30"
+    tags: [elections, precincts, voting, public]
+    snippet: Find your voting precinct and polling place.
+    data:
+      kind: custom_js
+      jsapi_version: "3.42"
+      layers: [svc_precincts]
+      geocoder: svc_geocode
+    exercises: "8 - hand-built app on ArcGIS API for JavaScript 3.42. JS 3.x scanner rule; custom_js_app classification. Note the absent Web AppBuilder typeKeywords --- classification has to lean on the data JSON, hence confidence=likely."
+
+  - key: app_street_resurfacing
+    n: 9
+    title: Street Resurfacing Program
+    type: Web Experience
+    typeKeywords: [ArcGIS Experience Builder, EXB Experience, JavaScript, Ready To Use, Web Experience]
+    platform: experience_builder
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Public Apps
+    numViews: 8460
+    created: "2024-03-12"
+    modified: "2026-01-20"
+    tags: [streets, resurfacing, capital projects, public]
+    snippet: This year's street resurfacing program by ward.
+    data:
+      kind: exb
+      map: map_street_centerlines
+      well_formed: true
+    exercises: "9 - well-formed Experience Builder app. NEGATIVE CASE: must produce no findings."
+
+  - key: app_park_finder
+    n: 10
+    title: Park & Trail Finder
+    type: Web Experience
+    typeKeywords: [ArcGIS Experience Builder, EXB Experience, JavaScript, Ready To Use, Web Experience]
+    platform: experience_builder
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Public Apps
+    numViews: 33710
+    created: "2024-09-04"
+    modified: "2025-11-14"
+    tags: [parks, trails, recreation, public]
+    snippet: Find a park, playground, or trailhead.
+    data:
+      kind: exb
+      map: map_parks
+      well_formed: false
+    exercises: "10 - EXB whose config has accessibility problems (missing widget labels, fixed layout, no alt text). Feeds BU2's static auditor later; must still classify cleanly here."
+
+  - key: app_water_main_breaks
+    n: 11
+    title: Water Main Break Dashboard
+    type: Dashboard
+    typeKeywords: [ArcGIS Dashboards, Dashboard, Operations Dashboard]
+    platform: dashboard
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Public Works
+    numViews: 5590
+    created: "2022-01-25"
+    modified: "2025-12-02"
+    tags: [water, breaks, operations]
+    snippet: Open water main breaks and crew assignments.
+    data:
+      kind: dashboard
+      map: map_utilities_master
+    exercises: "11 - Dashboard. Classified, but NOT recommended for migration."
+
+  - key: app_address_lookup
+    n: 12
+    title: Address Point Lookup
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Ready To Use, selfConfigured, Web Map]
+    platform: instant_app
+    confidence: certain
+    owner: dchen_ng
+    access: public
+    folder: Public Apps
+    numViews: 27400
+    created: "2023-05-30"
+    modified: "2025-08-19"
+    tags: [addresses, lookup, public]
+    snippet: Search an address and see its ward, precinct, and refuse day.
+    data:
+      kind: instant_app
+      template: nearby
+      map: map_address_points
+    exercises: "12 - Instant App. Classified, not recommended for migration."
+
+  - key: app_streetscape_story
+    n: 13
+    title: Downtown Streetscape Plan
+    type: StoryMap
+    typeKeywords: [arcgis-storymaps, StoryMap, Web Application]
+    platform: storymap
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Community Development
+    numViews: 9820
+    created: "2024-02-08"
+    modified: "2024-11-26"
+    tags: [downtown, streetscape, planning, public]
+    snippet: The plan for Washington Street, block by block.
+    data:
+      kind: storymap
+      map: map_street_centerlines
+    exercises: "13 - StoryMap. Classified, not recommended for migration."
+
+  - key: app_bike_network
+    n: 14
+    title: Bike Path Network
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: guess
+    owner: kmartinez_ng
+    access: public
+    folder: Public Apps
+    numViews: 4110
+    created: "2020-05-21"
+    modified: "2023-03-14"
+    tags: [bike, trails, transportation, public]
+    snippet: On-street bike lanes and off-street paths.
+    data:
+      kind: malformed
+    exercises: "14 - item data JSON is malformed. crawl_error path; the crawl continues and the run ends `partial`. Classification falls back to typeKeywords alone, hence confidence=guess."
+
+  - key: app_internal_facilities
+    n: 15
+    title: Internal Facilities Viewer
+    type: Web Mapping Application
+    typeKeywords: [JavaScript, Map, Mapping Site, Online Map, Web AppBuilder, WAB2D]
+    platform: web_appbuilder
+    confidence: guess
+    owner: dchen_ng
+    access: private
+    folder: Facilities
+    numViews: 260
+    created: "2021-10-12"
+    modified: "2024-01-30"
+    tags: [facilities, internal, security]
+    snippet: Building floor plans and access control points.
+    data:
+      kind: forbidden
+    exercises: "15 - item data returns 403. Recorded as a crawl_error and a finding, never a crash. This is the case that usually means the crawling account cannot see something."
+
+  # --- Web maps -------------------------------------------------------------
+
+  - key: map_parcels_zoning
+    n: 16
+    title: Parcels & Zoning
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 61200
+    created: "2019-03-28"
+    modified: "2025-06-30"
+    tags: [parcels, zoning]
+    snippet: Parcel fabric with zoning and overlay districts.
+    data:
+      kind: webmap
+      operational: [svc_parcels, svc_zoning]
+      basemap: svc_external_basemap
+    exercises: "16 - used by apps 1, 2, and 5. Fan-in; v_shared_maps; migrate once, fix many."
+
+  - key: map_storm_sewer
+    n: 17
+    title: Storm Sewer Network
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Basemaps & Web Maps
+    numViews: 1840
+    created: "2018-11-06"
+    modified: "2024-04-18"
+    tags: [storm, sewer, utilities]
+    snippet: Storm structures, mains, and outfalls.
+    data:
+      kind: webmap
+      operational: [svc_storm_sewer, svc_gone]
+    exercises: "17 - one layer's service is a 404. Reachability finding; reachable=0."
+
+  - key: map_traffic_signals
+    n: 18
+    title: Traffic Signals
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: jokafor_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 2210
+    created: "2021-01-19"
+    modified: "2024-08-07"
+    tags: [traffic, signals, transportation]
+    snippet: Signalized intersections and controller types.
+    data:
+      kind: webmap
+      operational_by_url: [svc_traffic_signals]
+    exercises: "18 - references a service by URL with no itemId. Forces an `endpoint` node with no item_id, which is the case a two-table design gets wrong."
+
+  - key: map_utilities_master
+    n: 19
+    title: Utilities Master
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Basemaps & Web Maps
+    numViews: 7460
+    created: "2018-06-02"
+    modified: "2026-02-11"
+    tags: [utilities, water, sewer, storm]
+    snippet: Every buried asset, grouped by system.
+    data:
+      kind: webmap
+      group_layers:
+        Utilities:
+          Wet Utilities:
+            Sanitary:
+              - svc_sanitary_sewer
+            Storm:
+              - svc_storm_sewer
+          Water:
+            Distribution:
+              - svc_water
+    exercises: "19 - group layers nested four levels deep. Recursion depth in edge extraction."
+
+  - key: map_trees
+    n: 20
+    title: Tree Inventory
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 3300
+    created: "2022-04-22"
+    modified: "2025-09-15"
+    tags: [trees, forestry, canopy]
+    snippet: Street tree inventory with species and condition.
+    data:
+      kind: webmap
+      operational: [svc_trees]
+      basemap: svc_external_basemap
+    exercises: "20 - basemap from outside the org. External domain detection."
+
+  - key: map_hydrant_inspection
+    n: 21
+    title: Fire Hydrant Inspection
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: jokafor_ng
+    access: org
+    folder: Public Works
+    numViews: 1290
+    created: "2021-09-08"
+    modified: "2025-05-21"
+    tags: [hydrants, inspection, fire]
+    snippet: Hydrant flow test results and inspection status.
+    data:
+      kind: webmap
+      operational: [svc_water]
+      arcade_sources: [svc_street_centerlines]
+    exercises: "21 - an Arcade expression reaches into another layer. `arcade_source` edges."
+
+  - key: map_street_centerlines
+    n: 22
+    title: Street Centerlines
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 5120
+    created: "2019-10-15"
+    modified: "2025-07-09"
+    tags: [streets, centerlines, transportation]
+    snippet: Centerlines symbolized twice --- by class and by pavement condition.
+    data:
+      kind: webmap
+      operational_repeated:
+        - { service: svc_street_centerlines, layer: 0 }
+        - { service: svc_street_centerlines, layer: 1 }
+        - { service: svc_street_centerlines, layer: 0 }
+    exercises: "22 - the same service at two indexes, and index 0 twice. URL normalization: ONE endpoint node, and edges distinguished by source_path."
+
+  - key: scene_downtown_3d
+    n: 23
+    title: Downtown 3D Buildings
+    type: Web Scene
+    typeKeywords: [3D, ArcGIS Online, Web Scene]
+    platform: web_scene
+    confidence: certain
+    owner: dchen_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 1470
+    created: "2023-08-30"
+    modified: "2025-10-03"
+    tags: [3d, buildings, downtown]
+    snippet: Extruded building footprints for the downtown core.
+    data:
+      kind: webscene
+      operational: [svc_buildings_3d]
+    exercises: "23 - Web Scene. Non-map spatial item classification."
+
+  # --- The remaining deliberately nasty metadata ----------------------------
+
+  - key: map_address_points
+    n: 24
+    title: Address Points
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: dchen_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: null
+    created: "2020-02-14"
+    modified: "2025-03-27"
+    tags: [addresses, geocoding]
+    snippet: Master address point layer.
+    data:
+      kind: webmap
+      operational: [svc_address_points, svc_precincts]
+    exercises: "numViews = null. Null is not zero --- 'unknown usage' is a different recommendation from 'unused'."
+
+  - key: map_plow_routes
+    n: 25
+    title: Plow Routes
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: jokafor_ng
+    access: public
+    folder: Public Works/Winter Ops
+    numViews: 18900
+    created: "2020-11-02"
+    modified: "2026-11-30"
+    tags: [snow, plow, routes]
+    snippet: Priority 1 through 3 plow routes.
+    data:
+      kind: webmap
+      operational: [svc_plow_routes, svc_street_centerlines]
+    exercises: "Folder name contains a forward slash (path construction on export), and `modified` is in the FUTURE relative to the fixture's run date. Clock skew is real."
+
+  - key: map_parks
+    n: 26
+    title: Parks
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 14200
+    created: "2021-05-11"
+    modified: null
+    tags: [parks, trails, recreation]
+    snippet: Parks, playgrounds, and trailheads.
+    data:
+      kind: webmap
+      operational: [svc_parks, svc_bike_paths]
+    exercises: "`modified` is null. Not the same as old."
+
+  - key: map_flood
+    n: 27
+    title: Floodplain & Floodway
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: kmartinez_ng
+    access: public
+    folder: Basemaps & Web Maps
+    numViews: 8700
+    created: "2019-07-01"
+    modified: "2023-04-28"
+    tags: [flood, fema, floodplain]
+    snippet: FEMA floodplain and floodway.
+    data:
+      kind: webmap
+      operational: [svc_flood_legacy]
+    exercises: "Carries case 7's http:// dependency down from the app."
+
+  - key: map_development_projects
+    n: 28
+    title: Development Projects
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: rpatel_ng
+    access: public
+    folder: Community Development
+    numViews: 6400
+    created: "2021-06-01"
+    modified: "2025-04-22"
+    tags: [development, planning]
+    snippet: Active projects in plan review.
+    data:
+      kind: webmap
+      operational: [svc_dev_projects, svc_parcels]
+    exercises: "The middle of the headline chain: public map over an org-only layer."
+
+  - key: map_parks_duplicate_title
+    n: 29
+    title: Parks
+    type: Web Map
+    typeKeywords: [ArcGIS Online, Explorer Web Map, Map, Online Map, Web Map]
+    platform: web_map
+    confidence: certain
+    owner: dchen_ng
+    access: org
+    folder: Community Development
+    numViews: 40
+    created: "2018-04-03"
+    modified: "2019-01-15"
+    tags: [parks, legacy, superseded]
+    snippet: Superseded parks map; kept for reference.
+    data:
+      kind: webmap
+      operational: [svc_parks]
+    exercises: "Identical title to item 26, in a different folder. Duplicate detection must key on item id, not title."
+
+  - key: widget_plow_status
+    n: 30
+    title: "Northgate Plow Status \U0001F69C widget — v2 (café build)"
+    type: Code Attachment
+    typeKeywords: [Code, Web Mapping Application, Widget]
+    platform: widget_package
+    confidence: likely
+    owner: jokafor_ng
+    access: org
+    folder: Public Works
+    numViews: 15
+    created: "2020-11-28"
+    modified: "2024-12-19"
+    tags: 200
+    snippet: Custom WAB widget rendering live plow status.
+    exercises: "The custom widget package behind app 3. Non-ASCII characters and an emoji in the title (Windows console codepage will find you), and 200 tags."
+
+# ---------------------------------------------------------------------------
+# The same org a month later. Without a second run the diff machinery is
+# untested and 'authored data survives a re-crawl' is a claim, not a test.
+# ---------------------------------------------------------------------------
+run2:
+  captured_at: "2026-09-06"
+  deleted: [app_historic_survey]
+  view_increases:
+    app_plow_status: 12400
+    app_parcel_zoning: 2100
+    app_park_finder: 900
+  reshared:
+    # An existing resource gains a NEW finding: the fingerprint must be new
+    # while the resource stays the same.
+    map_storm_sewer: public
+  resolved:
+    # The 404 service comes back, so the reachability finding stops firing and
+    # gets a resolved_run --- observed, not claimed.
+    - svc_gone
+  added:
+    - key: app_storm_sewer_exb
+      n: 31
+      title: Storm Sewer Network (Experience Builder)
+      type: Web Experience
+      typeKeywords: [ArcGIS Experience Builder, EXB Experience, JavaScript, Ready To Use, Web Experience]
+      platform: experience_builder
+      confidence: certain
+      owner: jokafor_ng
+      access: org
+      folder: Public Works
+      numViews: 40
+      created: "2026-08-20"
+      modified: "2026-09-01"
+      tags: [storm, sewer, utilities, exb]
+      snippet: Replacement for the Public Works Asset Viewer.
+      data:
+        kind: exb
+        map: map_storm_sewer
+        well_formed: true
+      exercises: "The replacement candidate. first_seen_run = run 2."
