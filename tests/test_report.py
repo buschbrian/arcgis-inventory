@@ -268,3 +268,24 @@ def test_both_renderers_report_the_same_numbers(full: sqlite3.Connection) -> Non
 def test_report_needs_a_crawl_first(conn: sqlite3.Connection) -> None:
     with pytest.raises(ValueError, match="no portal"):
         build_report(conn)
+
+
+def test_gaps_describe_the_latest_crawl_not_every_crawl_ever(
+    crawled: sqlite3.Connection,
+) -> None:
+    """After a bug is fixed and the crawl re-run, a report still citing the old
+    failures is telling the reader about a problem they already solved."""
+    from arcgis_inventory.crawl import PortalClient, crawl_inventory
+
+    first = " ".join(build_report(crawled).gaps)
+    assert "2 item(s) could not be fully read" in first
+
+    # Pretend the second crawl read everything.
+    second = crawl_inventory(
+        crawled, PortalClient(FixtureTransport(FIXTURE), PORTAL_URL, page_size=10)
+    )
+    crawled.execute("DELETE FROM crawl_error WHERE run_id = ?", (second.run_id,))
+    crawled.commit()
+
+    after = " ".join(build_report(crawled).gaps)
+    assert "could not be fully read" not in after

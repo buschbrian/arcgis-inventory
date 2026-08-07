@@ -168,9 +168,13 @@ def _gaps(conn: sqlite3.Connection, portal_id: int, data: ReportData) -> list[st
     """What this report does not know. Never omit this section."""
     gaps: list[str] = []
 
+    # Only the most recent crawl counts. Errors from a superseded run describe a
+    # portal, and a tool, that no longer exist --- after a bug is fixed and the
+    # crawl re-run, a report still citing the old failures is telling the reader
+    # about a problem they already solved.
     errors = conn.execute(
-        "SELECT COUNT(*) AS n FROM crawl_error ce JOIN run ON run.run_id = ce.run_id "
-        "WHERE run.portal_id = ?",
+        "SELECT COUNT(*) AS n FROM crawl_error WHERE run_id = ("
+        "  SELECT MAX(run_id) FROM run WHERE portal_id = ? AND mode = 'crawl')",
         (portal_id,),
     ).fetchone()["n"]
     if errors:
