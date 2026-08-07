@@ -30,6 +30,7 @@ __all__ = [
     "upsert_finding",
     "upsert_item",
     "upsert_portal",
+    "upsert_recommendation",
 ]
 
 
@@ -364,6 +365,42 @@ def upsert_finding(
         ),
     )
     return int(cursor.lastrowid or 0)
+
+
+def upsert_recommendation(
+    conn: sqlite3.Connection,
+    *,
+    resource_id: int,
+    run_id: int,
+    target: str,
+    confidence: str,
+    complexity: int | None,
+    rules_fired: list[str],
+    reasoning: str,
+) -> None:
+    """Write the generated recommendation, leaving any human override alone.
+
+    Someone deciding "this one is going to an Instant App regardless of what
+    the tool thinks" is exactly the judgment the tool cannot make, and rerunning
+    the engine must not quietly discard it.
+    """
+    existing = conn.execute(
+        "SELECT resource_id FROM recommendation WHERE resource_id = ?", (resource_id,)
+    ).fetchone()
+
+    if existing is not None:
+        conn.execute(
+            "UPDATE recommendation SET run_id = ?, target = ?, confidence = ?, complexity = ?, "
+            "rules_fired = ?, reasoning = ? WHERE resource_id = ?",
+            (run_id, target, confidence, complexity, _dumps(rules_fired), reasoning, resource_id),
+        )
+        return
+
+    conn.execute(
+        "INSERT INTO recommendation (resource_id, run_id, target, confidence, complexity, "
+        "rules_fired, reasoning) VALUES (?,?,?,?,?,?,?)",
+        (resource_id, run_id, target, confidence, complexity, _dumps(rules_fired), reasoning),
+    )
 
 
 def resolve_absent_findings(

@@ -22,6 +22,7 @@ from .crawl import CrawlResult, PortalClient, crawl_inventory
 from .db import SCHEMA_VERSION, open_database
 from .dependencies import build_dependencies
 from .errors import ArcgisInventoryError, ConfigError
+from .recommend import load_recommend_rules, recommend_targets
 from .reprocess import reprocess_inventory
 from .scan import load_scan_rules, scan_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
@@ -57,7 +58,8 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, audit-sharing, scan."
+    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, "
+    "audit-sharing, scan, recommend."
 )
 
 
@@ -477,9 +479,70 @@ def _report_audit(result: AuditResult, *, probed: bool) -> None:
 
 
 @app.command()
-def recommend(db: DbOption = None) -> None:
-    """Classify each app Retire / Instant App / Experience Builder / Custom, with reasoning."""
-    raise NotImplementedError(_ROADMAP)
+def recommend(
+    db: DbOption = None,
+    rules: Annotated[
+        Path | None, typer.Option("--rules", help="Directory containing your own recommend.yaml.")
+    ] = None,
+    show: Annotated[
+        int,
+        typer.Option(
+            "--show",
+            help="Print this many apps with their full reasoning, hardest first. -1 for all.",
+        ),
+    ] = 0,
+) -> None:
+    """Classify each app Retire / Instant App / Experience Builder / Custom, with reasoning.
+
+    Run `dependencies` first --- without the graph, every app looks like it has
+    no maps and no layers, and simple beats complex in every rule.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first.")
+        return
+
+    conn = open_database(target)
+    try:
+        edges = conn.execute("SELECT COUNT(*) AS n FROM edge").fetchone()["n"]
+        result = recommend_targets(conn, rules=load_recommend_rules(rules))
+        listed = conn.execute(
+            "SELECT r.title, c.target, c.confidence, c.complexity, c.reasoning, "
+            "c.override_target FROM recommendation c JOIN resource r USING (resource_id) "
+            "ORDER BY c.complexity DESC, r.title"
+        ).fetchall()
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    if not edges:
+        err_console.print(
+            "[yellow]warning[/] no dependency graph in this database. Run [bold]dependencies[/] "
+            "first --- without it every app looks like a single-map app and the recommendations "
+            "will be wrong in the same direction for everything."
+        )
+
+    table = Table("target", "apps", box=None, pad_edge=False)
+    for name, count in sorted(result.targets.items(), key=lambda kv: (-kv[1], kv[0])):
+        table.add_row(name, str(count))
+    if result.targets:
+        console.print(table)
+    console.print(
+        f"run {result.run_id}: {result.considered} applications"
+        + (f", {result.overridden} with a human override" if result.overridden else "")
+    )
+
+    for row in listed if show < 0 else listed[:show]:
+        marker = (
+            f" [dim](overridden -> {row['override_target']})[/]" if row["override_target"] else ""
+        )
+        console.print(
+            f"\n[bold]{row['title']}[/] --- {row['target']} "
+            f"({row['confidence']}, complexity {row['complexity']}){marker}"
+        )
+        console.print(f"  {row['reasoning']}")
 
 
 @app.command()

@@ -32,7 +32,7 @@ arcgis-inventory inventory      # crawl + classify                      [works]
 arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
 arcgis-inventory scan           # deprecated tech (WAB, JS 3.x, dojo)   [works]
 arcgis-inventory audit-sharing  # public apps on private layers         [works]
-arcgis-inventory recommend      # retire / instant app / experience builder / custom
+arcgis-inventory recommend      # retire / instant app / EXB / custom    [works]
 arcgis-inventory report         # Markdown + HTML rollup
 arcgis-inventory reprocess      # re-derive from stored JSON, no network    [works]
 ```
@@ -258,6 +258,59 @@ Two behaviours worth knowing:
 - `views_below` **never matches an unknown view count.** NULL means "we don't
   know", and retiring an app on the strength of a missing number is how you
   delete something people depend on.
+
+### Decide where each app should go
+
+```bash
+arcgis-inventory recommend --db /tmp/demo.sqlite --show 2
+```
+
+```
+target              apps
+keep                5
+instant_app         4
+custom              2
+unknown             2
+experience_builder  1
+retire              1
+run 3: 15 applications
+
+Public Works Asset Viewer --- experience_builder (likely, complexity 69)
+  Rebuild in Experience Builder --- it has more moving parts than a
+  configurable template covers --- multiple pages, many widgets, or
+  geoprocessing. Experience Builder is the like-for-like replacement.
+  Signals: 1 web map, 8 layers, 7 widgets, 3 pages, printing, a geocoder, a
+  web map shared with other apps, 3,120 views.
+
+Snow Plow Route Status --- custom (certain, complexity 64)
+  Rebuild as custom development --- it uses custom widget code, which no
+  configurable app can reproduce. Decide early whether that behaviour is
+  still needed --- dropping it is often cheaper than rebuilding it. Signals:
+  1 web map, 4 layers, 4 widgets (1 custom), geoprocessing, 91,455 views.
+```
+
+**The reasoning is the output; the label is a summary of it.** A bare verdict of
+"Experience Builder" gets ignored — "7 widgets, 3 pages, printing, a geocoder,
+3,120 views" gets acted on, and can be argued with. Every recommendation is
+built from the same numbers the rule matched on, so a reader can check it.
+
+Three things the rules are opinionated about:
+
+- **Instant Apps are the default for simple apps**, not Experience Builder.
+  Most Web AppBuilder apps in the wild are one map, a search box, and a legend.
+  This matches Esri's own guidance.
+- **Retirement comes before rebuilding.** The cheapest migration is the one you
+  don't do, so orphaned and unused apps are flagged to retire first.
+- **An app whose config couldn't be read gets `unknown`, not a guess.** A
+  confident "Instant App" for an app nobody could inspect is worse than silence.
+
+`complexity` is 0–100 and is not an estimate in hours — it's a way to sort 200
+apps so the cheap ones get done first. Rules and weights live in
+[`rules/recommend.yaml`](src/arcgis_inventory/rules/recommend.yaml); first match
+wins, so ordering is part of the meaning.
+
+Set `override_target` on any row to record a human decision. Re-running the
+engine updates the generated verdict beside it and never touches the override.
 
 ## Handle the output carefully
 

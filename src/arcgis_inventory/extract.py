@@ -20,7 +20,7 @@ from typing import Any
 
 from .urls import normalize_url, service_root
 
-__all__ = ["ExtractedEdge", "extract_edges"]
+__all__ = ["ExtractedEdge", "extract_edges", "wab_widget_names"]
 
 # Only URLs that look like ArcGIS REST services are dependencies. An Arcade
 # expression also mentions the portal URL, and a popup can link anywhere.
@@ -193,6 +193,48 @@ def _widgets(widgets: Any, path: str) -> Iterator[ExtractedEdge]:
                 source.get("url"), f"{path}/{i}/config/sources/{j}/url", "widget_config"
             ):
                 yield edge
+
+
+def wab_widget_names(data: Any) -> list[str]:
+    """Every widget a Web AppBuilder app uses, by name.
+
+    Shared by the scanner (which asks which of these are custom) and the
+    recommendation engine (which asks how many there are). A multi-page app
+    puts its widgets in `groups` rather than `widgets`, and an app with a
+    docked widget bar puts some in `widgetOnScreen` --- miss either and a
+    complex app reads as a simple one.
+    """
+    if not isinstance(data, dict):
+        return []
+
+    collections: list[Any] = []
+    pool = data.get("widgetPool")
+    if isinstance(pool, dict):
+        collections.append(pool.get("widgets"))
+        groups = pool.get("groups")
+        if isinstance(groups, list):
+            collections += [g.get("widgets") for g in groups if isinstance(g, dict)]
+
+    on_screen = data.get("widgetOnScreen")
+    if isinstance(on_screen, dict):
+        collections.append(on_screen.get("widgets"))
+
+    names: list[str] = []
+    for collection in collections:
+        if not isinstance(collection, list):
+            continue
+        for widget in collection:
+            if isinstance(widget, dict) and (name := _widget_name(widget.get("uri"))):
+                names.append(name)
+    return names
+
+
+def _widget_name(uri: Any) -> str | None:
+    """`widgets/Search/Widget` -> `Search`."""
+    if not isinstance(uri, str):
+        return None
+    parts = [p for p in uri.split("/") if p]
+    return parts[1] if len(parts) >= 2 and parts[0] == "widgets" else None
 
 
 def _experience_builder(data: dict[str, Any]) -> Iterator[ExtractedEdge]:

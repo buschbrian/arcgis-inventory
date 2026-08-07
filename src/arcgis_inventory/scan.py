@@ -22,6 +22,7 @@ import yaml
 
 from . import __version__
 from .db import store
+from .extract import wab_widget_names
 from .fingerprint import finding_fingerprint
 
 __all__ = ["Rule", "ScanResult", "load_scan_rules", "scan_inventory"]
@@ -314,45 +315,11 @@ def _match_custom_wab_widget(value: Any, context: _Context) -> tuple[bool, dict[
         return False, {}
 
     custom = sorted(
-        {
-            name
-            for uri in _widget_uris(context.data)
-            if (name := _widget_name(uri)) and name not in context.stock_widgets
-        }
+        {name for name in wab_widget_names(context.data) if name not in context.stock_widgets}
     )
     if not custom:
         return False, {}
     return True, {"custom_widgets": custom}
-
-
-def _widget_uris(data: dict[str, Any]) -> list[str]:
-    uris: list[str] = []
-    collections: list[Any] = []
-
-    pool = data.get("widgetPool")
-    if isinstance(pool, dict):
-        collections.append(pool.get("widgets"))
-        # A multi-page WAB app puts its widgets in groups instead.
-        groups = pool.get("groups")
-        if isinstance(groups, list):
-            collections += [g.get("widgets") for g in groups if isinstance(g, dict)]
-
-    for collection in collections:
-        if isinstance(collection, list):
-            uris += [w["uri"] for w in collection if isinstance(w, dict) and "uri" in w]
-
-    on_screen = data.get("widgetOnScreen")
-    if isinstance(on_screen, dict) and isinstance(on_screen.get("widgets"), list):
-        uris += [w["uri"] for w in on_screen["widgets"] if isinstance(w, dict) and "uri" in w]
-    return uris
-
-
-def _widget_name(uri: Any) -> str | None:
-    """`widgets/Search/Widget` -> `Search`."""
-    if not isinstance(uri, str):
-        return None
-    parts = [p for p in uri.split("/") if p]
-    return parts[1] if len(parts) >= 2 and parts[0] == "widgets" else None
 
 
 def _match_views_below(value: Any, context: _Context) -> tuple[bool, dict[str, Any]]:

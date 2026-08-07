@@ -17,8 +17,8 @@ before anything is pointed at a real portal.
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
 - **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, `reprocess`,
-  `dependencies`, `audit-sharing`, and `scan` work; every other subcommand
-  raises rather than quietly succeeding.
+  `dependencies`, `audit-sharing`, `scan`, and `recommend` work; the rest
+  raise rather than quietly succeeding.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -50,13 +50,16 @@ before anything is pointed at a real portal.
   data and are replaced wholesale via `--rules`. An unknown matcher name raises
   rather than silently passing.
 
+- **`recommend`** — `recommend.py` + `rules/recommend.yaml`. Ordered rules over
+  graph-derived signals; first match wins. Generates the *reasoning* from the
+  same numbers the rule matched on, plus a 0–100 complexity score for sorting.
+  Biased toward Instant Apps; refuses to guess about items whose config could
+  not be read; never overwrites a human `override_target`.
+
 ## Next
 
-1. **`recommend`** — rule-based target with generated reasoning. Bias toward
-   Instant Apps for simple single-map apps rather than defaulting to Experience
-   Builder.
-2. **`report`** — Markdown + HTML, generated from the fixture for the README.
-3. **`wab-export`** — dump WAB widget/theme/search config as migration
+1. **`report`** — Markdown + HTML, generated from the fixture for the README.
+2. **`wab-export`** — dump WAB widget/theme/search config as migration
    documentation.
 
 ## Known gaps
@@ -68,6 +71,9 @@ before anything is pointed at a real portal.
 - **Probe results are a point in time** and are stored on the endpoint rather
   than per run, so there is no history of when a service changed sharing.
 - **Mermaid and Graphviz export** of the graph is not built yet.
+- **`recommend` needs `dependencies` to have run.** Without the graph every app
+  reads as a single-map app with no layers, which skews every verdict the same
+  way. The CLI warns; it does not refuse.
 - **`scan` reads item documents only.** The two fixture items whose data could
   not be read therefore match almost nothing — that is missing knowledge, not a
   clean bill, and `recommend` has to treat low-signal items as unknown rather

@@ -175,9 +175,39 @@ def test_scan_can_filter_by_severity(tmp_path: Path, monkeypatch: pytest.MonkeyP
     assert "unused-and-stale" not in result.output  # low severity, filtered out
 
 
+def test_recommend_reports_targets_with_reasoning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+    runner.invoke(app, ["dependencies", "--db", str(db)])
+
+    result = runner.invoke(app, ["recommend", "--db", str(db), "--show", "3"])
+    assert result.exit_code == 0, result.output
+    assert "instant_app" in result.output
+    assert "15 applications" in result.output
+    # The reasoning, not just the label.
+    assert "widgets" in result.output
+
+
+def test_recommend_warns_when_the_graph_is_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["recommend", "--db", str(db)])
+    assert result.exit_code == 0, result.output
+    assert "dependencies" in result.output
+
+
 @pytest.mark.parametrize(
     "command",
-    ["recommend", "report"],
+    ["report"],
 )
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""

@@ -1,0 +1,144 @@
+# Where each application should land.
+#
+# Rules are evaluated in order and the FIRST match wins --- a recommendation is
+# one verdict, not an accumulation. Order is therefore part of the meaning:
+# honesty rules first, then retirement, then effort, then the default.
+#
+# Comparators inside a clause: equals, not_equals, in, gt, gte, lt, lte.
+# Combinators: all / any / none.
+#
+# The bias toward Instant Apps is deliberate and matches Esri's own guidance.
+# Most Web AppBuilder apps in the wild are one map, a search box and a legend;
+# rebuilding those in Experience Builder is more work than they deserve and
+# produces something harder to maintain.
+
+# Only these platforms get a recommendation. A web map or a feature service is
+# not migrated in its own right --- it is a dependency of something that is.
+recommend_platforms:
+  - web_appbuilder
+  - custom_js_app
+  - experience_builder
+  - dashboard
+  - instant_app
+  - storymap
+  - hub_site
+
+# Rough effort score, 0-100, comparable across apps. Not an estimate in hours;
+# a way to sort a list of 200 apps so the cheap ones get done first.
+complexity:
+  base: 5
+  per_widget: 4
+  per_custom_widget: 25
+  per_layer: 2
+  per_page: 6
+  uses_gp: 10
+  uses_print: 5
+  uses_geocoder: 3
+
+rules:
+  # ---------------------------------------------------------------------------
+  # Honesty first. An item whose configuration could not be read must not be
+  # given a verdict --- a confident "Instant App" for an app nobody could
+  # inspect is worse than saying so.
+  # ---------------------------------------------------------------------------
+  - id: unknown-unreadable
+    target: unknown
+    confidence: guess
+    when:
+      signal: data_known
+      equals: false
+    because: >-
+      its configuration could not be read during the crawl, so there is nothing
+      to judge. Check permissions on the item and re-crawl before planning it.
+
+  # ---------------------------------------------------------------------------
+  # The cheapest migration is the one you do not do.
+  # ---------------------------------------------------------------------------
+  - id: retire-orphaned-and-unused
+    target: retire
+    confidence: likely
+    when:
+      all:
+        - {signal: owner_exists, equals: false}
+        - {signal: num_views, lte: 0}
+    because: >-
+      nobody owns it and nothing has viewed it. Confirm with the owning group,
+      then archive rather than rebuild.
+
+  - id: retire-unused
+    target: retire
+    confidence: guess
+    when:
+      all:
+        - {signal: num_views, lte: 0}
+        - {signal: days_since_modified, gte: 730}
+    because: >-
+      it has no recorded views and has not been touched in over two years.
+      Worth confirming it is dead before spending anything on it.
+
+  # ---------------------------------------------------------------------------
+  # Already somewhere current.
+  # ---------------------------------------------------------------------------
+  - id: keep-current-platform
+    target: keep
+    confidence: certain
+    when:
+      signal: platform
+      in: [experience_builder, dashboard, instant_app, storymap, hub_site]
+    because: >-
+      it is already on a platform with no retirement date. Nothing to do for
+      the Web AppBuilder deadline.
+
+  # ---------------------------------------------------------------------------
+  # Rewrites. These are the expensive ones and they should surface early.
+  # ---------------------------------------------------------------------------
+  - id: custom-hand-built-app
+    target: custom
+    confidence: likely
+    when:
+      signal: platform
+      equals: custom_js_app
+    because: >-
+      it is hand-written against a retired API rather than configured, so there
+      is no configuration to carry across. Budget a rebuild, and check first
+      whether a configurable app would now do the job.
+
+  - id: custom-widget-rewrite
+    target: custom
+    confidence: certain
+    when:
+      signal: custom_widget_count
+      gte: 1
+    because: >-
+      it uses custom widget code, which no configurable app can reproduce.
+      Decide early whether that behaviour is still needed --- dropping it is
+      often cheaper than rebuilding it.
+
+  # ---------------------------------------------------------------------------
+  # The common case, and the one worth getting right.
+  # ---------------------------------------------------------------------------
+  - id: instant-app-simple
+    target: instant_app
+    confidence: likely
+    when:
+      all:
+        - {signal: platform, equals: web_appbuilder}
+        - {signal: map_count, lte: 1}
+        - {signal: widget_count, lte: 4}
+        - {signal: page_count, lte: 1}
+        - {signal: uses_gp, equals: false}
+    because: >-
+      it is a single map with a handful of standard widgets. An Instant App
+      covers this in an afternoon, and Experience Builder would be more app
+      than the job needs.
+
+  - id: experience-builder-complex
+    target: experience_builder
+    confidence: likely
+    when:
+      signal: platform
+      equals: web_appbuilder
+    because: >-
+      it has more moving parts than a configurable template covers --- multiple
+      pages, many widgets, or geoprocessing. Experience Builder is the
+      like-for-like replacement.
