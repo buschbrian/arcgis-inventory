@@ -118,3 +118,26 @@ def test_an_unrecognized_portal_endpoint_is_unmapped(transport: FixtureTransport
 def test_response_ok_reflects_http_status_only() -> None:
     assert Response(url="x", status=200, data={"error": {"code": 403}}).ok is True
     assert Response(url="x", status=403, data=None).ok is False
+
+
+def test_the_suite_cannot_reach_the_network() -> None:
+    """Proves the conftest guard is live rather than assumed.
+
+    Added after a `.env` in the repo root caused the test suite to start
+    crawling a production portal: the tests asserting "refuses to run without a
+    portal" were the ones that did it.
+    """
+    from arcgis_inventory.transport import HttpTransport
+
+    transport = HttpTransport(timeout=1, max_retries=0, max_rps=0)
+    try:
+        with pytest.raises(AssertionError, match="real HTTP connection"):
+            transport.get_json("https://example.com/sharing/rest/portals/self")
+    finally:
+        transport.close()
+
+
+def test_ambient_arcgis_environment_is_not_visible_to_tests() -> None:
+    import os
+
+    assert not [name for name in os.environ if name.startswith("ARCGIS_")]

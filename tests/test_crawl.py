@@ -456,3 +456,33 @@ def test_the_scoped_query_reaches_the_portal(conn: sqlite3.Connection) -> None:
     crawl_inventory(conn, PortalClient(Recording(FIXTURE), PORTAL_URL, page_size=10))
     assert sent
     assert all(q == "orgid:NgFiXtUrEoRg0001" for q in sent)
+
+
+def test_a_rejected_search_fails_the_run_instead_of_reporting_an_empty_org(
+    conn: sqlite3.Connection,
+) -> None:
+    """ArcGIS Online answers a rejected search with HTTP 200 and an error
+    object. Treating that as 'no results' is how a tool tells somebody their
+    organization is clean when it never looked."""
+
+    class RejectingSearch(FixtureTransport):
+        def get_json(self, url: str, params: dict[str, Any] | None = None):
+            if url.endswith("/search"):
+                from arcgis_inventory.transport import Response
+
+                return Response(
+                    url=url,
+                    status=200,
+                    data={"error": {"code": 400, "message": "Unable to perform search."}},
+                )
+            return super().get_json(url, params)
+
+    result = crawl_inventory(conn, PortalClient(RejectingSearch(FIXTURE), PORTAL_URL))
+
+    assert result.status == "failed"
+    assert result.item_count == 0
+    error = conn.execute(
+        "SELECT message, http_status FROM crawl_error WHERE phase = 'search'"
+    ).fetchone()
+    assert "Unable to perform search" in error["message"]
+    assert error["http_status"] == 400

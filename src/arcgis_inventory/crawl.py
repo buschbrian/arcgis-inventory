@@ -30,11 +30,11 @@ __all__ = ["CrawlResult", "PortalClient", "crawl_inventory", "scoped_query"]
 def scoped_query(query: str, org_id: str | None) -> str:
     """Confine a search to one organization.
 
-    This matters most in the case that looks safest. An **anonymous** search
-    against ArcGIS Online with no query returns every public item in ArcGIS
-    Online --- the entire worldwide public catalogue, not your organization's.
-    The result is a meaningless inventory built by hammering Esri's servers for
-    hours, and nothing about the request looks wrong while it happens.
+    ArcGIS Online rejects a search with an empty `q` outright --- HTTP 200 with
+    ``{"error": {"code": 400, "message": "Unable to perform search."}}``. Since
+    an error object carries no `results`, an unscoped crawl does not fail
+    loudly; it reports an organization with nothing in it. Measured against a
+    live org, not assumed.
 
     Enterprise scopes anonymous search to the portal already, but pinning the
     org id there too costs nothing and makes the run reproducible.
@@ -105,6 +105,19 @@ class PortalClient:
             ).data
             if not isinstance(page, dict):
                 break
+
+            # The REST API answers a rejected search with HTTP 200 and an error
+            # object. Without this, a malformed or unscoped query produces an
+            # empty result set and the crawl cheerfully reports an organization
+            # with nothing in it --- the one failure this tool must never have.
+            if isinstance(page.get("error"), dict):
+                error = page["error"]
+                raise PortalError(
+                    f"search rejected: {error.get('message', 'no message')} (query {query!r})",
+                    url=f"{self.rest}/search",
+                    status=error.get("code"),
+                )
+
             items.extend(page.get("results") or [])
             start = int(page.get("nextStart", -1))
 
