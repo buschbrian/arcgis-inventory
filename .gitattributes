@@ -1,0 +1,8 @@
+# Normalize to LF in the repository. Authoring happens on Windows; CI runs the
+# shell steps on Ubuntu, and a CRLF workflow script fails there in a way that is
+# annoying to diagnose.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.sqlite binary

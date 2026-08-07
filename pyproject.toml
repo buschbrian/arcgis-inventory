@@ -1,0 +1,86 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "arcgis-inventory"
+version = "0.1.0.dev0"
+description = "Inventory, dependency-map, and audit an ArcGIS Online or Enterprise portal ahead of the Web AppBuilder retirement."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+authors = [{ name = "Brian Busch" }]
+keywords = ["arcgis", "gis", "web-appbuilder", "experience-builder", "migration", "inventory"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: GIS",
+]
+
+# Deliberately small, pure-pip, no conda. This has to install on a locked-down
+# government workstation. The `arcgis` package is intentionally NOT a dependency
+# --- raw ArcGIS REST over httpx instead.
+dependencies = [
+  "httpx>=0.27",
+  "typer>=0.12",
+  "rich>=13.7",
+  "networkx>=3.2",
+  "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "pytest-cov>=5.0",
+  "hypothesis>=6.100",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "types-PyYAML",
+]
+graph = ["pygraphviz>=1.13"]  # optional; Mermaid export needs nothing extra
+
+[project.urls]
+Homepage = "https://github.com/buschbrian/arcgis-inventory"
+Issues = "https://github.com/buschbrian/arcgis-inventory/issues"
+
+[project.scripts]
+arcgis-inventory = "arcgis_inventory.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/arcgis_inventory"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "A", "C4", "SIM", "PTH", "RUF"]
+ignore = [
+  "A003",  # class attribute shadowing a builtin -- schema columns do this
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "network: touches a real portal; never runs in CI",
+]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["arcgis_inventory"]
+strict = true
+warn_unreachable = true
+
+[tool.coverage.run]
+source = ["src/arcgis_inventory"]
+branch = true

@@ -1,0 +1,66 @@
+# ---------------------------------------------------------------------------
+# Radioactive by default.
+#
+# Real inventory output is a complete map of an organization's GIS attack
+# surface, including which services are public that shouldn't be. Nothing
+# produced by a real crawl may ever reach this repo. These rules come first,
+# before the boring Python ones, because they are the ones that matter.
+# ---------------------------------------------------------------------------
+output/
+out/
+runs/
+*.sqlite
+*.sqlite3
+*.db
+
+# Crawl exports dropped at the repo root by an inattentive `--out .`
+/*.csv
+/*.json
+/*.html
+/*.md
+!/README.md
+!/CHANGELOG.md
+!/CONTRIBUTING.md
+
+# Credentials. There is no scenario where one of these belongs in git.
+.env
+.env.*
+!env.example
+*.token
+*.pem
+*.pfx
+token.json
+
+# Screenshots and demo data are generated from the synthetic fixture org,
+# never from a live portal.
+screenshots/
+demo/
+
+# ---------------------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.tox/
+.nox/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
