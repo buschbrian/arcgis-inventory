@@ -33,7 +33,7 @@ arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
 arcgis-inventory scan           # deprecated tech (WAB, JS 3.x, dojo)   [works]
 arcgis-inventory audit-sharing  # public apps on private layers         [works]
 arcgis-inventory recommend      # retire / instant app / EXB / custom    [works]
-arcgis-inventory report         # Markdown + HTML rollup
+arcgis-inventory report         # Markdown + HTML rollup               [works]
 arcgis-inventory reprocess      # re-derive from stored JSON, no network    [works]
 ```
 
@@ -311,6 +311,38 @@ wins, so ordering is part of the meaning.
 
 Set `override_target` on any row to record a human decision. Re-running the
 engine updates the generated verdict beside it and never touches the override.
+
+### Roll it up for people who won't run the tool
+
+```bash
+arcgis-inventory report --db /tmp/demo.sqlite --out /tmp/report
+```
+
+Writes `inventory-report.md` and `inventory-report.html` — self-contained, no
+external stylesheet or script, so it survives being emailed around. The HTML is
+built to the accessibility standard this project argues for: headings in order,
+table captions and scoped headers, nothing meaningful carried by colour alone.
+
+The report leads with the deadline, then the public-exposure findings, then the
+migration plan ordered hardest-first. It ends with the section that matters
+most:
+
+```
+## What this report does not know
+
+- 2 item(s) could not be fully read during the crawl. Their configuration was
+  not analysed, so any conclusion about them is weaker than it looks.
+- 1 service endpoint(s) did not answer when probed, so their sharing could not
+  be established either. Whatever depends on them is already broken.
+- 2 application(s) have no recommendation, because their configuration could
+  not be read. They still need a decision; the tool declines to guess.
+- 1 item(s) report no view count. Unknown usage is not zero usage, and nothing
+  here treats it as such.
+```
+
+A rollup like this gets forwarded and read as a complete picture, so it has to
+say what it skipped. If sharing was never probed, it says so in those words —
+**absence of exposure findings is not evidence of no exposure.**
 
 ## Handle the output carefully
 

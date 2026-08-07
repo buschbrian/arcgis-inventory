@@ -23,6 +23,7 @@ from .db import SCHEMA_VERSION, open_database
 from .dependencies import build_dependencies
 from .errors import ArcgisInventoryError, ConfigError
 from .recommend import load_recommend_rules, recommend_targets
+from .report import build_report, render_html, render_markdown
 from .reprocess import reprocess_inventory
 from .scan import load_scan_rules, scan_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
@@ -59,7 +60,7 @@ DbOption = Annotated[
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
     "Implemented so far: init-db, doctor, inventory, reprocess, dependencies, "
-    "audit-sharing, scan, recommend."
+    "audit-sharing, scan, recommend, report."
 )
 
 
@@ -546,9 +547,70 @@ def recommend(
 
 
 @app.command()
-def report(db: DbOption = None) -> None:
-    """Roll the database up into Markdown and HTML."""
-    raise NotImplementedError(_ROADMAP)
+def report(
+    db: DbOption = None,
+    out: Annotated[
+        Path | None,
+        typer.Option("--out", help="Directory to write into. Defaults to $ARCGIS_OUTPUT_DIR."),
+    ] = None,
+    fmt: Annotated[str, typer.Option("--format", help="markdown, html, or both.")] = "both",
+) -> None:
+    """Roll the database up into Markdown and HTML.
+
+    The output is as sensitive as the database it came from --- it names every
+    publicly-exposed app and every service that answers. `output/` is gitignored
+    for that reason; treat the files the same way you would a vulnerability scan.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first.")
+        return
+
+    if fmt not in ("markdown", "html", "both"):
+        _fail(f"--format must be markdown, html, or both (got {fmt!r})")
+        return
+
+    directory = out or _default_output_dir()
+    conn = open_database(target)
+    try:
+        data = build_report(conn)
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    directory.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+
+    if fmt in ("markdown", "both"):
+        path = directory / "inventory-report.md"
+        path.write_text(render_markdown(data), encoding="utf-8", newline="")
+        written.append(path)
+    if fmt in ("html", "both"):
+        path = directory / "inventory-report.html"
+        path.write_text(render_html(data), encoding="utf-8", newline="")
+        written.append(path)
+
+    for path in written:
+        console.print(f"wrote [bold]{path}[/]")
+
+    console.print(
+        f"{data.item_count} items, {data.wab_count} Web AppBuilder apps, "
+        f"{len(data.exposure)} public exposure finding(s)"
+    )
+    if data.gaps:
+        err_console.print(
+            f"[yellow]note[/] the report lists {len(data.gaps)} thing(s) it does not know. "
+            "Read that section before circulating it."
+        )
+
+
+def _default_output_dir() -> Path:
+    try:
+        return load_config().output_dir
+    except ConfigError:
+        return Path("output")
 
 
 @app.command("wab-export")

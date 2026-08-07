@@ -205,10 +205,58 @@ def test_recommend_warns_when_the_graph_is_missing(
     assert "dependencies" in result.output
 
 
-@pytest.mark.parametrize(
-    "command",
-    ["report"],
-)
+def test_report_writes_both_formats(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    out = tmp_path / "out"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["report", "--db", str(db), "--out", str(out)])
+    assert result.exit_code == 0, result.output
+    assert (out / "inventory-report.md").exists()
+    assert (out / "inventory-report.html").exists()
+    assert "9 Web AppBuilder apps" in result.output
+
+
+def test_report_honours_the_format_flag(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    out = tmp_path / "out"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(
+        app, ["report", "--db", str(db), "--out", str(out), "--format", "markdown"]
+    )
+    assert result.exit_code == 0, result.output
+    assert (out / "inventory-report.md").exists()
+    assert not (out / "inventory-report.html").exists()
+
+
+def test_report_rejects_an_unknown_format(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["report", "--db", str(db), "--format", "pdf"])
+    assert result.exit_code == 2
+
+
+def test_report_warns_about_its_own_gaps(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """It gets forwarded to people who will not run the tool themselves."""
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    out = tmp_path / "out"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["report", "--db", str(db), "--out", str(out)])
+    assert "does not know" in result.output
+
+
+@pytest.mark.parametrize("command", ["wab-export"])
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""
     result = runner.invoke(app, [command])

@@ -17,8 +17,8 @@ before anything is pointed at a real portal.
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
 - **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, `reprocess`,
-  `dependencies`, `audit-sharing`, `scan`, and `recommend` work; the rest
-  raise rather than quietly succeeding.
+  `dependencies`, `audit-sharing`, `scan`, `recommend`, and `report` work;
+  `wab-export` raises rather than quietly succeeding.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -56,10 +56,15 @@ before anything is pointed at a real portal.
   Biased toward Instant Apps; refuses to guess about items whose config could
   not be read; never overwrites a human `override_target`.
 
+- **`report`** — `report.py`. One gathered structure, two renderers, so Markdown
+  and HTML cannot drift. Self-contained accessible HTML (headings in order,
+  captioned and scoped tables, escaped titles). Always ends with a "what this
+  report does not know" section listing unread items, unprobed endpoints,
+  missing graph, and missing recommendations.
+
 ## Next
 
-1. **`report`** — Markdown + HTML, generated from the fixture for the README.
-2. **`wab-export`** — dump WAB widget/theme/search config as migration
+1. **`wab-export`** — dump WAB widget/theme/search config as migration
    documentation.
 
 ## Known gaps
