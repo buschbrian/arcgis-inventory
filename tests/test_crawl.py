@@ -403,3 +403,56 @@ def test_store_never_writes_authored_columns() -> None:
     source = (Path(store.__file__)).read_text(encoding="utf-8")
     for forbidden in ("override_target", "override_note", "status_note", "blocked_reason"):
         assert forbidden not in source, f"{forbidden} must never be written by a crawl"
+
+
+# ---------------------------------------------------------------------------
+# Search scoping
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("query", "org_id", "expected"),
+    [
+        ("", "ORG123", "orgid:ORG123"),
+        ("type:Web Map", "ORG123", "orgid:ORG123 AND (type:Web Map)"),
+        ("", None, ""),
+        ("type:Web Map", None, "type:Web Map"),
+        # A caller who scoped it themselves is left alone.
+        ("orgid:OTHER", "ORG123", "orgid:OTHER"),
+    ],
+)
+def test_search_is_scoped_to_the_organization(
+    query: str, org_id: str | None, expected: str
+) -> None:
+    """An anonymous unscoped search against ArcGIS Online returns the entire
+    worldwide public catalogue, not this org. Nothing about the request looks
+    wrong while it happens."""
+    from arcgis_inventory.crawl import scoped_query
+
+    assert scoped_query(query, org_id) == expected
+
+
+def test_the_crawl_records_the_query_it_actually_sent(conn: sqlite3.Connection) -> None:
+    result = crawl_inventory(conn, client())
+    scope = json.loads(
+        conn.execute("SELECT scope_json FROM run WHERE run_id = ?", (result.run_id,)).fetchone()[
+            "scope_json"
+        ]
+    )
+    # The fixture portal reports an org id, so the crawl must have scoped to it.
+    assert scope["effective_query"] == "orgid:NgFiXtUrEoRg0001"
+    assert scope["query"] == ""
+
+
+def test_the_scoped_query_reaches_the_portal(conn: sqlite3.Connection) -> None:
+    sent: list[Any] = []
+
+    class Recording(FixtureTransport):
+        def get_json(self, url: str, params: dict[str, Any] | None = None):
+            if url.endswith("/search"):
+                sent.append((params or {}).get("q"))
+            return super().get_json(url, params)
+
+    crawl_inventory(conn, PortalClient(Recording(FIXTURE), PORTAL_URL, page_size=10))
+    assert sent
+    assert all(q == "orgid:NgFiXtUrEoRg0001" for q in sent)

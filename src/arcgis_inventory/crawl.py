@@ -24,7 +24,28 @@ from .db import store
 from .errors import PortalError
 from .transport import Transport
 
-__all__ = ["CrawlResult", "PortalClient", "crawl_inventory"]
+__all__ = ["CrawlResult", "PortalClient", "crawl_inventory", "scoped_query"]
+
+
+def scoped_query(query: str, org_id: str | None) -> str:
+    """Confine a search to one organization.
+
+    This matters most in the case that looks safest. An **anonymous** search
+    against ArcGIS Online with no query returns every public item in ArcGIS
+    Online --- the entire worldwide public catalogue, not your organization's.
+    The result is a meaningless inventory built by hammering Esri's servers for
+    hours, and nothing about the request looks wrong while it happens.
+
+    Enterprise scopes anonymous search to the portal already, but pinning the
+    org id there too costs nothing and makes the run reproducible.
+
+    A caller who writes their own `orgid:` is left alone.
+    """
+    query = query.strip()
+    if not org_id or "orgid:" in query.lower():
+        return query
+    scope = f"orgid:{org_id}"
+    return f"{scope} AND ({query})" if query else scope
 
 
 @dataclass(slots=True)
@@ -105,12 +126,19 @@ def crawl_inventory(
 
     portal_info = _portal_info(client)
     portal_id = store.upsert_portal(conn, **portal_info)
+    effective_query = scoped_query(query, portal_info.get("org_id"))
+
     run_id = store.start_run(
         conn,
         portal_id=portal_id,
         mode="crawl",
         tool_version=__version__,
-        scope={"query": query, "page_size": client.page_size, "fetch_data": fetch_data},
+        scope={
+            "query": query,
+            "effective_query": effective_query,
+            "page_size": client.page_size,
+            "fetch_data": fetch_data,
+        },
     )
 
     known_users = client.usernames()
@@ -126,7 +154,7 @@ def crawl_inventory(
     platforms: dict[str, int] = {}
 
     try:
-        items = client.search(query)
+        items = client.search(effective_query)
     except PortalError as exc:
         store.record_error(
             conn,
