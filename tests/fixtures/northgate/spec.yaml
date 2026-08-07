@@ -601,7 +601,7 @@ items:
       kind: webmap
       operational: [svc_parcels, svc_zoning]
       basemap: svc_external_basemap
-    exercises: "16 - used by apps 1, 2, and 5. Fan-in; v_shared_maps; migrate once, fix many."
+    exercises: "16 - used by apps 1 and 4, so it survives when app 4 is retired. Fan-in; v_shared_maps. The three-app fan-in case is item 19."
 
   - key: map_storm_sewer
     n: 17
@@ -670,7 +670,7 @@ items:
           Water:
             Distribution:
               - svc_water
-    exercises: "19 - group layers nested four levels deep. Recursion depth in edge extraction."
+    exercises: "19 - group layers nested four levels deep. Recursion depth in edge extraction. Also the top fan-in case: used by apps 2, 6, and the dashboard, so v_shared_maps ranks it first --- migrate once, fix many."
 
   - key: map_trees
     n: 20

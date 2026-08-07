@@ -24,7 +24,7 @@ import re
 from dataclasses import dataclass
 from urllib.parse import urlsplit
 
-__all__ = ["SERVICE_TYPES", "NormalizedUrl", "normalize_url", "same_service"]
+__all__ = ["SERVICE_TYPES", "NormalizedUrl", "normalize_url", "same_service", "service_root"]
 
 # ArcGIS REST service endpoint types. Matched case-insensitively; the canonical
 # spelling here is what lands in ``resource.service_type``.
@@ -166,3 +166,32 @@ def _last_service_index(segments: list[str]) -> int | None:
 def same_service(a: str, b: str) -> bool:
     """True when two URLs denote the same endpoint, ignoring scheme and layer."""
     return normalize_url(a).url == normalize_url(b).url
+
+
+def service_root(raw: str) -> NormalizedUrl:
+    """Normalize, then drop anything hanging below the service itself.
+
+    A print or geoprocessing configuration points at a *task*
+    (``.../GPServer/Export%20Web%20Map%20Task``), but the thing an organization
+    depends on --- and the thing that breaks --- is the service. Without this,
+    every GP task becomes its own graph node and impact analysis fragments.
+
+    A URL with no recognizable service type is returned unchanged; guessing
+    where to truncate would be worse than not truncating.
+    """
+    normalized = normalize_url(raw)
+    if normalized.service_type is None:
+        return normalized
+
+    segments = normalized.url.split("//", 1)[1].split("/")
+    for i, segment in enumerate(segments):
+        if segment.lower() in _SERVICE_TYPE_BY_LOWER:
+            trimmed = "https://" + "/".join(segments[: i + 1])
+            return NormalizedUrl(
+                url=trimmed,
+                host=normalized.host,
+                is_https=normalized.is_https,
+                layer_index=normalized.layer_index,
+                service_type=normalized.service_type,
+            )
+    return normalized  # pragma: no cover - service_type implies a match

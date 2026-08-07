@@ -18,6 +18,7 @@ from . import __version__
 from .config import RuntimeConfig, load_config
 from .crawl import CrawlResult, PortalClient, crawl_inventory
 from .db import SCHEMA_VERSION, open_database
+from .dependencies import build_dependencies
 from .errors import ArcgisInventoryError, ConfigError
 from .reprocess import reprocess_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
@@ -53,7 +54,7 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory, reprocess."
+    "Implemented so far: init-db, doctor, inventory, reprocess, dependencies."
 )
 
 
@@ -280,8 +281,41 @@ def reprocess(
 
 @app.command()
 def dependencies(db: DbOption = None) -> None:
-    """Resolve app -> web map -> layers/geocoders/GP/print into a graph."""
-    raise NotImplementedError(_ROADMAP)
+    """Resolve app -> web map -> layers/geocoders/GP/print into a graph.
+
+    Reads the raw documents the crawl stored; no network. Service *sharing* is
+    left unknown here --- determining whether a bare endpoint is reachable by
+    the public takes an unauthenticated probe, which is `audit-sharing`'s job.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first.")
+        return
+
+    conn = open_database(target)
+    try:
+        result = build_dependencies(conn)
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    table = Table("relation", "edges", box=None, pad_edge=False)
+    for relation, count in sorted(result.relations.items(), key=lambda kv: (-kv[1], kv[0])):
+        table.add_row(relation, str(count))
+    if result.relations:
+        console.print(table)
+
+    console.print(
+        f"run {result.run_id}: [bold]{result.edge_count}[/] dependencies across "
+        f"{result.endpoint_count} service endpoints"
+    )
+    if result.unresolved:
+        err_console.print(
+            f"[yellow]note[/] {len(result.unresolved)} references point at items this crawl "
+            "never saw --- deleted, or invisible to the crawling account. See `crawl_error`."
+        )
 
 
 @app.command()

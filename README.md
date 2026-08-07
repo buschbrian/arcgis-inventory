@@ -29,7 +29,7 @@ organization's portal four times to answer four questions about the same items.
 
 ```
 arcgis-inventory inventory      # crawl + classify                      [works]
-arcgis-inventory dependencies   # app -> web map -> layers/geocoders/GP/print
+arcgis-inventory dependencies   # app -> web map -> layers/GP/print     [works]
 arcgis-inventory scan           # deprecated tech (JS 3.x, dojo, http://)
 arcgis-inventory audit-sharing  # public apps on private layers, orphans, dev refs
 arcgis-inventory recommend      # retire / instant app / experience builder / custom
@@ -126,6 +126,43 @@ anyone asks about "you have 9 Web AppBuilder apps" is how the tool knows:
 ```sql
 SELECT title, platform, platform_confidence, platform_evidence FROM resource;
 ```
+
+Then build the graph:
+
+```bash
+arcgis-inventory dependencies --db /tmp/demo.sqlite
+```
+
+```
+relation           edges
+operational_layer  43
+data_source        12
+basemap            2
+geocoder           2
+arcade_source      1
+gp_service         1
+print_service      1
+widget_config      1
+run 2: 63 dependencies across 21 service endpoints
+```
+
+Every edge records the **JSON pointer it came from**, which is what makes a
+dependency arguable rather than asserted — and what turns the graph into impact
+analysis when you read it backwards:
+
+```
+what breaks if Public/Parcels/FeatureServer changes?
+  Parcels & Zoning       operational_layer  /operationalLayers/0/url
+  Parcels & Zoning       operational_layer  /operationalLayers/1/url
+  Development Projects   operational_layer  /operationalLayers/2/url
+  Development Projects   operational_layer  /operationalLayers/3/url
+```
+
+Dependencies the tool goes looking for that most inventories miss: layers nested
+inside group layers to any depth, services referenced by URL with no portal item
+behind them, search-widget configurations pointing somewhere the app's web map
+never mentions, and **Arcade expressions** reaching into a layer the map does not
+list at all.
 
 ## Handle the output carefully
 

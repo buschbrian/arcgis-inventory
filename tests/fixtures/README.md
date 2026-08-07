@@ -149,10 +149,10 @@ entry below is a test case first and a fake app second.
 
 | # | Item | Exercises |
 |---|---|---|
-| 16 | Web map used by **apps 1, 2, and 5** | Fan-in; `v_shared_maps`; "migrate once, fix many" |
+| 16 | Web map used by **apps 1 and 4** | Fan-in; survives when app 4 retires |
 | 17 | Web map with a **broken layer** (service 404) | Reachability finding; `reachable=0` |
 | 18 | Web map referencing a service **by URL only**, no item | ⭐ Forces an `endpoint` node with no `item_id` |
-| 19 | Web map with a **deeply nested group layer** (4 levels) | Recursion depth in edge extraction |
+| 19 | Web map with a **deeply nested group layer** (4 levels), used by **apps 2, 6, and the dashboard** | Recursion depth in edge extraction; top `v_shared_maps` fan-in — "migrate once, fix many" |
 | 20 | Web map with a basemap from **outside the org** | External domain detection |
 | 21 | Web map with **Arcade** expressions referencing another layer | `arcade_source` edges |
 | 22 | Web map with the **same layer twice** at different indexes | URL normalization: one endpoint node, two edges |

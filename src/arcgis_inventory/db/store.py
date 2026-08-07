@@ -22,6 +22,8 @@ __all__ = [
     "record_error",
     "record_usage",
     "start_run",
+    "upsert_edge",
+    "upsert_endpoint",
     "upsert_item",
     "upsert_portal",
 ]
@@ -174,6 +176,108 @@ def upsert_item(
     placeholders = ", ".join("?" for _ in columns)
     cursor = conn.execute(
         f"INSERT INTO resource ({names}) VALUES ({placeholders})", tuple(columns.values())
+    )
+    return int(cursor.lastrowid or 0)
+
+
+def upsert_endpoint(
+    conn: sqlite3.Connection,
+    *,
+    portal_id: int,
+    run_id: int,
+    url_normalized: str,
+    host: str | None = None,
+    is_https: bool | None = None,
+    service_type: str | None = None,
+) -> int:
+    """Insert or refresh a bare service endpoint --- a node that is not a portal item.
+
+    Many dependencies are not items: a web map can reference a map service by
+    URL, a geocoder hosted elsewhere, a print service on another server. One
+    node table keeps every graph query from becoming a union.
+    """
+    existing = conn.execute(
+        "SELECT resource_id, is_https FROM resource WHERE portal_id = ? AND url_normalized = ?",
+        (portal_id, url_normalized),
+    ).fetchone()
+
+    if existing is not None:
+        # If the same service is ever referenced over http, the endpoint stays
+        # flagged as insecure. One plaintext reference is the finding, and a
+        # later https reference does not undo it.
+        merged = existing["is_https"]
+        if is_https is not None:
+            merged = 0 if merged == 0 or not is_https else 1
+        conn.execute(
+            "UPDATE resource SET host = COALESCE(?, host), is_https = ?, "
+            "service_type = COALESCE(?, service_type), last_seen_run = ? WHERE resource_id = ?",
+            (host, merged, service_type, run_id, existing["resource_id"]),
+        )
+        return int(existing["resource_id"])
+
+    cursor = conn.execute(
+        "INSERT INTO resource (portal_id, kind, url_normalized, title, host, is_https, "
+        "service_type, platform, first_seen_run, last_seen_run) VALUES (?,?,?,?,?,?,?,?,?,?)",
+        (
+            portal_id,
+            "endpoint",
+            url_normalized,
+            url_normalized.rsplit("/", 2)[-2] if "/" in url_normalized else None,
+            host,
+            None if is_https is None else int(is_https),
+            service_type,
+            _PLATFORM_BY_SERVICE.get(service_type or ""),
+            run_id,
+            run_id,
+        ),
+    )
+    return int(cursor.lastrowid or 0)
+
+
+_PLATFORM_BY_SERVICE = {
+    "FeatureServer": "feature_service",
+    "MapServer": "map_service",
+    "ImageServer": "image_service",
+    "GeocodeServer": "geocode_service",
+    "GPServer": "gp_service",
+    "SceneServer": "other",
+    "VectorTileServer": "other",
+}
+
+
+def upsert_edge(
+    conn: sqlite3.Connection,
+    *,
+    from_resource: int,
+    to_resource: int,
+    relation: str,
+    source_path: str | None,
+    run_id: int,
+    detail: dict[str, Any] | None = None,
+) -> int:
+    """Insert or refresh one dependency.
+
+    Identity is (from, to, relation, source_path). The same layer referenced
+    from two different widgets is genuinely two dependencies with two pieces of
+    remediation work, so `source_path` belongs in the key.
+    """
+    existing = conn.execute(
+        "SELECT edge_id FROM edge WHERE from_resource = ? AND to_resource = ? AND relation = ? "
+        "AND source_path IS ?",
+        (from_resource, to_resource, relation, source_path),
+    ).fetchone()
+
+    if existing is not None:
+        conn.execute(
+            "UPDATE edge SET detail_json = ?, last_seen_run = ? WHERE edge_id = ?",
+            (_dumps(detail), run_id, existing["edge_id"]),
+        )
+        return int(existing["edge_id"])
+
+    cursor = conn.execute(
+        "INSERT INTO edge (from_resource, to_resource, relation, source_path, detail_json, "
+        "first_seen_run, last_seen_run) VALUES (?,?,?,?,?,?,?)",
+        (from_resource, to_resource, relation, source_path, _dumps(detail), run_id, run_id),
     )
     return int(cursor.lastrowid or 0)
 

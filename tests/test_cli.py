@@ -78,6 +78,28 @@ def test_reprocess_reports_that_nothing_changed(
     assert "0" in result.output  # 0 classifications changed
 
 
+def test_dependencies_builds_the_graph_after_a_crawl(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    db = tmp_path / "inv.sqlite"
+    fixture = Path(__file__).parent / "fixtures" / "northgate"
+    runner.invoke(app, ["inventory", "--fixture", str(fixture), "--db", str(db)])
+
+    result = runner.invoke(app, ["dependencies", "--db", str(db)])
+    assert result.exit_code == 0, result.output
+    assert "63 dependencies" in result.output
+    assert "operational_layer" in result.output
+
+
+def test_dependencies_before_any_crawl_fails_clearly(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.delenv("ARCGIS_PORTAL_URL", raising=False)
+    result = runner.invoke(app, ["dependencies", "--db", str(tmp_path / "missing.sqlite")])
+    assert result.exit_code == 2
+
+
 def test_reprocess_before_any_crawl_fails_clearly(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -97,7 +119,7 @@ def test_inventory_without_a_portal_fails_rather_than_crawling_nothing(
 
 @pytest.mark.parametrize(
     "command",
-    ["dependencies", "scan", "audit-sharing", "recommend", "report"],
+    ["scan", "audit-sharing", "recommend", "report"],
 )
 def test_unimplemented_commands_fail_rather_than_quietly_succeeding(command: str) -> None:
     """A crawl command that silently does nothing is how you conclude an org is clean."""
