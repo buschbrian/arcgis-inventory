@@ -34,8 +34,27 @@ arcgis-inventory scan           # deprecated tech (JS 3.x, dojo, http://)
 arcgis-inventory audit-sharing  # public apps on private layers, orphans, dev refs
 arcgis-inventory recommend      # retire / instant app / experience builder / custom
 arcgis-inventory report         # Markdown + HTML rollup
-arcgis-inventory reprocess      # re-derive everything from stored JSON, no network
+arcgis-inventory reprocess      # re-derive from stored JSON, no network    [works]
 ```
+
+Every crawl keeps the portal's raw responses, so `reprocess` re-runs the rules
+over stored JSON in seconds instead of re-crawling:
+
+```bash
+arcgis-inventory reprocess --db /tmp/demo.sqlite
+```
+
+```
+run 2: reprocessed 30 items --- 0 classifications changed
+```
+
+Zero is the expected answer immediately after a crawl, and it is worth having a
+command that proves it: if reprocessing ever *did* change something, either the
+crawl is not storing what it classified from, or classification depends on
+something the database does not hold.
+
+After a rule change it lists what moved, item by item, before and after — which
+is the only honest way to review one.
 
 ### The query worth the price of admission
 

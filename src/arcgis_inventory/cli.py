@@ -19,6 +19,7 @@ from .config import RuntimeConfig, load_config
 from .crawl import CrawlResult, PortalClient, crawl_inventory
 from .db import SCHEMA_VERSION, open_database
 from .errors import ArcgisInventoryError, ConfigError
+from .reprocess import reprocess_inventory
 from .transport import FixtureTransport, HttpTransport, Transport
 
 console = Console()
@@ -52,7 +53,7 @@ DbOption = Annotated[
 # you end up believing an org is clean.
 _ROADMAP = (
     "Not implemented yet --- see the build order in docs/roadmap.md. "
-    "Implemented so far: init-db, doctor, inventory."
+    "Implemented so far: init-db, doctor, inventory, reprocess."
 )
 
 
@@ -224,6 +225,53 @@ def _report_crawl(result: CrawlResult, database: Path) -> None:
         )
 
 
+@app.command()
+def reprocess(
+    db: DbOption = None,
+    show: Annotated[
+        int, typer.Option("--show", help="How many changed items to list. 0 lists all.")
+    ] = 20,
+) -> None:
+    """Re-derive classifications from stored raw JSON. No network.
+
+    This is the development loop --- crawling a 5,000-item org takes a long time
+    and hammers someone's portal; re-running the rules over stored JSON takes
+    seconds. It reports what a rule change actually moved.
+    """
+    target = _resolve_db(db)
+    if not target.exists():
+        _fail(f"{target} does not exist. Run `inventory` first --- there is nothing to reprocess.")
+        return
+
+    conn = open_database(target)
+    try:
+        result = reprocess_inventory(conn)
+    except ValueError as exc:
+        _fail(str(exc))
+        return
+    finally:
+        conn.close()
+
+    console.print(
+        f"run {result.run_id}: reprocessed {result.resource_count} items --- "
+        f"[bold]{result.change_count}[/] classifications changed"
+    )
+    if result.skipped:
+        err_console.print(
+            f"[yellow]note[/] {result.skipped} items had no stored raw document and were "
+            "skipped rather than reclassified from nothing."
+        )
+
+    if result.changed:
+        table = Table("item", "before", "after", box=None, pad_edge=False)
+        listed = result.changed if show == 0 else result.changed[:show]
+        for change in listed:
+            table.add_row(change.title or change.item_id, change.before, change.after)
+        console.print(table)
+        if len(result.changed) > len(listed):
+            console.print(f"... and {len(result.changed) - len(listed)} more (--show 0 for all)")
+
+
 # ---------------------------------------------------------------------------
 # Roadmap --- the subcommands from the design, declared so the shape of the tool
 # is visible and the help text is honest about what is missing.
@@ -257,17 +305,6 @@ def recommend(db: DbOption = None) -> None:
 @app.command()
 def report(db: DbOption = None) -> None:
     """Roll the database up into Markdown and HTML."""
-    raise NotImplementedError(_ROADMAP)
-
-
-@app.command()
-def reprocess(db: DbOption = None) -> None:
-    """Re-derive classifications, edges, findings, and recommendations from stored raw JSON.
-
-    No network. This is the development loop --- crawling a 5,000-item org takes
-    a long time and hammers someone's portal; re-running the rules over stored
-    JSON takes seconds and can run in CI.
-    """
     raise NotImplementedError(_ROADMAP)
 
 

@@ -16,8 +16,8 @@ before anything is pointed at a real portal.
   and `FixtureTransport` (disk, loud on an unmapped URL) behind one protocol, so
   tests exercise the real pagination/classification/extraction code.
 - **Config** — `config.py`, environment only, refuses to guess.
-- **CLI shape** — `cli.py`. `init-db`, `doctor`, and `inventory` work; every
-  other subcommand raises rather than quietly succeeding.
+- **CLI shape** — `cli.py`. `init-db`, `doctor`, `inventory`, and `reprocess`
+  work; every other subcommand raises rather than quietly succeeding.
 - **Fixture org** — `tests/fixtures/northgate/`, 30 items and 22 services
   generated from `spec.yaml`, plus a second crawl as an overlay. Self-verifying:
   every `source_path` it claims is resolved against the JSON it points at.
@@ -27,20 +27,23 @@ before anything is pointed at a real portal.
   `expected/inventory.json`. Runs against a local fixture with `--fixture`, so
   the tool is demonstrable with no portal and no credentials.
 
+- **`reprocess`** — `reprocess.py`. Re-derives classification from stored raw
+  documents with no network, and reports what a rule change moved, item by item.
+  Guaranteed structurally: the module cannot import a transport, and a test
+  asserts it. Does not advance `last_seen_run` — a reprocess observes nothing.
+
 ## Next
 
-1. **`reprocess`** — re-derive everything from `raw_json` with no network. Build
-   this early: it is the development loop, and it runs in CI.
-2. **`dependencies`** — recursive app → web map → layers / geocoders / GP /
+1. **`dependencies`** — recursive app → web map → layers / geocoders / GP /
    print, into `edge` with `source_path`. NetworkX load, Mermaid export.
-3. **`audit-sharing`** — the views are already in the schema; this wires them to
+2. **`audit-sharing`** — the views are already in the schema; this wires them to
    findings with stable fingerprints. Highest-value single feature in the tool.
-4. **`scan`** — YAML rule format, deprecated-tech detection.
-5. **`recommend`** — rule-based target with generated reasoning. Bias toward
+3. **`scan`** — YAML rule format, deprecated-tech detection.
+4. **`recommend`** — rule-based target with generated reasoning. Bias toward
    Instant Apps for simple single-map apps rather than defaulting to Experience
    Builder.
-6. **`report`** — Markdown + HTML, generated from the fixture for the README.
-7. **`wab-export`** — dump WAB widget/theme/search config as migration
+5. **`report`** — Markdown + HTML, generated from the fixture for the README.
+6. **`wab-export`** — dump WAB widget/theme/search config as migration
    documentation.
 
 ## Explicitly out of scope
